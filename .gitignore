@@ -1,0 +1,10 @@
+.DS_Store
+
+# As 13 fotos originais de câmera: 141 MB que o git carregaria para sempre.
+# O site consome public/img/, que está versionado. Para regerar as fotos é
+# preciso ter os originais na pasta local e rodar ./tools/build-assets.sh —
+# os demais insumos do build (logos, brasões, ressonância, fontes) estão aqui.
+assets/fotos-originais/Mario_est*.jpg
+
+# Pacote de skills do agente, não faz parte do site
+.agents/

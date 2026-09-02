@@ -1,0 +1,432 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+> O conteúdo do site e o briefing são em português. Escreva copy, comentários e commits em português.
+
+## O que é
+
+Site institucional de **página única** do Dr. Mario de Geus Neto — otorrinolaringologista e
+cirurgião de cabeça e pescoço. Tem dois objetivos, nessa ordem de importância: **acolher o
+paciente** e **converter em agendamento pelo WhatsApp**. Toda decisão de design ou copy
+deve responder a um dos dois.
+
+Stack: **HTML + CSS + JS estático, sem build step**, sem framework, sem bundler,
+sem `package.json`. Isso é uma decisão do dono do projeto, não uma etapa pendente —
+não introduza Vite/Astro/React/Tailwind sem pedir.
+
+## Comandos
+
+```bash
+python3 -m http.server 8000     # servidor local, a partir da raiz
+./tools/build-assets.sh          # regenera public/ a partir de assets/ (idempotente)
+FORCE=1 ./tools/build-assets.sh  # refaz tudo do zero
+```
+
+Não há testes, linter nem CI. Não invente um.
+
+## Estrutura
+
+```
+index.html      a página inteira (uma só)
+css/estilo.css  toda a folha de estilo
+js/site.js      navbar, menu mobile, revelações no scroll, assinatura
+assets/         originais intocáveis (fotos de câmera, logos em resolução de
+                impressão, fontes .ttf, e os dois .md de briefing).
+                NUNCA referencie daqui no HTML.
+public/         saída do pipeline — é isto que o site consome.
+tools/          build-assets.sh
+```
+
+### Seções, na ordem
+
+| Âncora | Fundo | Papel |
+|---|---|---|
+| `#inicio` | **escuro** | Hero: foto 79 à esquerda, texto à direita |
+| `#formacao` | claro | Formação em lista + foto 9 como plano de fundo à direita |
+| `#especialidades` | claro | O território anatômico + oncologia |
+| `#locais` | **escuro, em gradiente** | Curitiba e Ponta Grossa; cada endereço é um link para o Google Maps |
+| `#contato` | claro | CTA final do WhatsApp + Instagram, com o símbolo escrito à mão ao fundo |
+
+A alternância claro/escuro é a espinha do ritmo da página. Formação e
+especialidades são as duas únicas claras seguidas — por isso a folga entre elas
+é reduzida por regra explícita, senão o corte some numa faixa clara só.
+
+**Caixa mista** (`text-transform: none`, entrelinha 1.16, quase sem espacejamento)
+vale para **todos os títulos de seção** — hero, formação, especialidades (incluindo
+os nomes das regiões anatômicas), locais e contato. Dois títulos destacam palavras por peso, em Cormorant SemiBold (600) dentro de
+`<em>` com `font-style: normal` — é para isso que existem os pesos 500/600 da
+Cormorant: "Clareza"/"Precisão" na hero e "Duas"/"quatro" em locais. O destaque
+marca sempre o par de palavras que carrega o sentido da frase, nunca uma palavra
+solta.
+
+As **versais espaçadas** ficaram para os rótulos, não para os títulos:
+sobrancelhas, nomes de cidade (`.cidade h3`) e o nome no rodapé. A divisão é
+deliberada — título é caixa mista, rótulo é caixa alta.
+
+**Há uma camada de grão** (`body::after`, ruído SVG em `feTurbulence`, 5% de
+opacidade, `position: fixed`, `z-index: 300`, `pointer-events: none`) por cima da
+página inteira. Ela tira o aspecto chapado dos fundos e dos gradientes. Como fica
+acima de tudo, qualquer elemento novo com `z-index` alto precisa de
+`pointer-events` coerente — mas nada é bloqueado por ela.
+
+**O título da hero não é o nome do médico.** É uma frase sobre postura
+profissional ("Clareza nos diagnósticos. Precisão nos tratamentos"); o nome está
+na logo da navbar e na assinatura. A ordem do bloco é fixa: lugar → frase →
+especialidade → registros → CTA.
+
+O `<br>` entre as duas frases do título é intencional: sem ele o `text-wrap`
+orfaniza um "NOS" numa linha só. Se mudar o título, confira a contagem de linhas
+antes de dar por pronto — a coluna de texto é estreita e o corpo é grande.
+
+### O território (a régua vertical)
+
+A seção de especialidades é organizada por **região anatômica, descendo o corpo** —
+ouvido, nariz, garganta, pescoço — com um fio vertical ligando as quatro e as
+palavras "crânio" e "tórax" nas pontas. Isso não é ornamento: é a frase do próprio
+médico ("praticamente todas as afecções entre o crânio e o tórax") desenhada.
+
+Por isso a lista é `<ol>` e **não leva numeração visível** — a ordem é anatômica,
+não uma sequência de passos. Não troque por cards nem por números.
+
+A oncologia fica **fora** da régua, num bloco próprio: ela atravessa todas as
+regiões em vez de ocupar uma.
+
+`assets/instrucoes/instrucoes.md` (identidade visual) e `assets/instrucoes/informacoes.md`
+(conteúdo médico) são a fonte de verdade original. Este arquivo resume os dois, mas em caso
+de conflito o briefing manda.
+
+## Sistema de design
+
+### Cores
+
+| Hex | Papel |
+|---|---|
+| `#272D3B` | azul-ardósia. Fundo de seção escura; **é também a cor da logo "Azul"** |
+| `#E5EAE3` | verde-claro acinzentado. Fundo de seção clara |
+| `#88857C` | cinza-quente. Fundo intermediário, **uso comedido** |
+| `#3F512B` | verde. **Só adorno e detalhe** — nunca área de destaque nem fundo de seção |
+
+Duas cores derivadas existem por acessibilidade, não por gosto: `#88857C` só alcança
+**3.0:1** sobre o fundo claro e **3.7:1** sobre o escuro, o que reprova para texto
+corrido. Então o `--pedra` ficou restrito a fios, réguas e campos lavados, e o texto
+secundário usa `--tinta-suave` `#5C6274` (5.0:1 no claro) e `--papel-suave` `#B8BDB6`
+(7.2:1 no escuro). Não devolva o `#88857C` para texto pequeno.
+
+**Regra de pareamento da logo** (do manual, não negociável):
+fundo `#E5EAE3` → logo `#272D3B`; **qualquer outro fundo** → logo `#E5EAE3`.
+
+Transições entre seções devem ser suaves, com gradientes dentro da paleta.
+
+### Tipografia
+
+```css
+/* Títulos — CAIXA ALTA, peso light. Auto-hospedada (OFL), pesos 300/400/500/600. */
+font-family: "Cormorant", serif;  font-weight: 300;  text-transform: uppercase;
+
+/* Corpo — kit do Adobe Fonts. */
+font-family: "seravek-web", system-ui, sans-serif;  font-weight: 400;
+```
+
+O kit entra no `<head>`: `<link rel="stylesheet" href="https://use.typekit.net/czr1bwa.css">`.
+Pesos disponíveis da `seravek-web`: 200, 300, 400, 600, 700 — cada um com itálico.
+
+### Logo — qual arquivo onde
+
+- **horizontal** → navbar, em duas versões que se alternam: **branca** enquanto a
+  barra está transparente sobre a hero escura, **azul** depois do scroll, quando a
+  barra fica clara. No mobile a barra é sempre clara, então vale sempre a azul.
+- **símbolo** → marcas d'água e a linha de preceptoria na formação
+- **principal / circular / pattern** → só quando pedido explicitamente
+
+### Marcas d'água
+
+Três, todas decorativas (`alt=""`, `aria-hidden`), todas por baixo do texto:
+
+| Onde | Imagem | Tratamento |
+|---|---|---|
+| Hero | o **símbolo animado**, em claro (`color: var(--papel)`) | altura total da seção, à direita; máscara linear faz a opacidade cair da direita para a esquerda, acompanhando o gradiente azul. No mobile: centralizado, com máscara radial. `logo/simbolo-branco.png` não é mais usado no site |
+| Especialidades | `rm-pescoco.webp` | vive **dentro do `.territorio`**: a altura é exatamente a da régua, de "crânio" a "tórax". `right: calc(50% - 50vw)` a leva do envelope até a borda da tela |
+| Menu mobile | `rm-pescoco.webp` | o painel inteiro, com o azul em `mix-blend-mode: color` |
+| Contato | o próprio símbolo animado | centralizado atrás do texto, `opacity: .085` |
+
+**A máscara da ressonância precisa ser radial e zerar dentro da caixa.** Com máscara
+só horizontal, as bordas de cima e de baixo ficavam retas e a de cima virava uma
+linha na emenda com a formação. E se os raios da elipse extrapolarem a caixa, a
+máscara ainda vale nas bordas e a imagem termina numa linha reta — por isso
+`ellipse 58% 50% at 66% 50%`: à esquerda, em cima e embaixo ela morre junto da
+borda; à direita extrapola de propósito, para sangrar na borda da tela.
+
+**Enquadrar a ressonância tem duas variáveis independentes, e é fácil culpar a
+errada.** O recorte (`object-position` + a proporção da caixa) escolhe *qual trecho*
+da imagem entra; a máscara escolhe *qual trecho do recorte* ganha peso. A frente do
+paciente (nariz, lábios, queixo) está nos primeiros ~25% da imagem, a coluna em
+40-60% e o dorso depois. Já aconteceu de o recorte estar certo e a máscara, centrada
+em 72% da caixa, mostrar só a coluna. E estreitar demais a caixa corta o perfil e
+transforma tudo num borrão: o que faz a imagem ser reconhecível é o contraste
+interno (`contrast(1.8)`), não a opacidade bruta.
+
+**Fundo translúcido também muda o contraste.** O bloco de oncologia é
+`color-mix(var(--musgo) 95%, transparent)`: a transparência clareia o verde e, a
+88%, derrubou o texto de dentro para 3.5:1. O par que passa é 95% de verde com
+`--musgo-suave` `#DDE3D9`. Mexer num dos dois exige remedir.
+
+**Marca d'água atrás de texto muda o contraste, sempre.** Duas vezes isso derrubou
+texto abaixo de 4.5:1 e as duas correções estão nos tokens: o texto secundário da
+hero usa `--papel-hero` `#D3D8D1` (mais claro, porque o símbolo escurece pontos do
+fundo azul) e o `--tinta-suave` foi de `#5C6274` para `#4E5466` (mais escuro, porque
+a ressonância escurece o fundo claro das especialidades). Se mexer na opacidade, no
+tamanho ou na posição de qualquer marca d'água, **meça o contraste de novo**
+amostrando os pixels do fundo renderizado — não confie no valor nominal do token.
+
+### Formas
+
+Botões e pílulas são **totalmente arredondados** (`border-radius: 999px`), em
+conversa com o avatar circular do WhatsApp e com os brasões das instituições.
+Não volte para cantos retos.
+
+### Movimento
+
+Lento e elegante: as aparições levam **1,6 s** com `--curva-lenta` e sobem 28 px.
+Nada de bounce, nada rápido, nada chamativo. É um site médico — a sensação alvo é
+seriedade, confiança e respeito. Sempre respeite `prefers-reduced-motion`.
+
+## Conteúdo canônico
+
+Copie daqui literalmente. São registros profissionais: um dígito errado é um problema real.
+
+**Dr. Mario de Geus Neto** — CRM-PR 44.604 · RQE ORL 38.131 · RQE CCP 38.979
+
+Formação:
+- Médico pela Pontifícia Universidade Católica do Paraná (PUCPR)
+- Otorrinolaringologista pelo Instituto de Assistência Médica ao Servidor Público Estadual de São Paulo (IAMSPE)
+- Cirurgião de Cabeça e Pescoço pelo Hospital de Clínicas da Faculdade de Medicina da Universidade de São Paulo (HCFMUSP)
+- Doutorando pela Faculdade de Medicina da Universidade de São Paulo (FMUSP)
+- Médico assistente e preceptor de ORL e CCP nos Hospitais Cajuru (HUC) e Evangélico Mackenzie (HUEM), em Curitiba-PR
+
+Locais de atendimento:
+- **Curitiba-PR**: Hospital Santa Cruz (CEMED) · Hospital Evangélico Mackenzie (convênios e particular)
+- **Ponta Grossa-PR**: O1 Saúde · Hospital São Camilo
+
+Contatos: WhatsApp **+55 42 99973-4488** (principal) · Instagram **@drmariodegeus** (secundário,
+só na seção de contato).
+
+### Link do WhatsApp
+
+Use exatamente este href em todos os CTAs — não remonte a mão:
+
+```
+https://wa.me/5542999734488?text=Ol%C3%A1%21%20Gostaria%20de%20agendar%20uma%20consulta%20com%20o%20Dr.%20Mario%20de%20Geus%21
+```
+
+**Todo CTA no imperativo** ("Agende sua consulta", "Fale comigo") — nunca "Saiba mais".
+
+## Diretriz editorial
+
+Linguagem séria, respeitosa e gentil. O paciente que chega aqui pode estar assustado
+(a lista inclui câncer e tumores) — acolha antes de vender.
+
+O briefing entrega a lista de condições como um despejo clínico. Ela **deve** ser
+reorganizada em grupos legíveis para leigo — Ouvido e Audição · Nariz e Seios da Face ·
+Garganta, Voz e Vias Aéreas · Cabeça e Pescoço (nódulos, tireoide, glândulas salivares,
+oncologia) — explicando primeiro *para que serve* cada especialidade. Um diferencial que
+vale destacar: ORL e CCP juntas cobrem praticamente tudo entre o crânio e o tórax, e no
+Brasil é raro o mesmo médico ter as duas.
+
+Nunca prometa resultado de tratamento nem cura.
+
+## Assets
+
+`./tools/build-assets.sh` gera, a partir de `assets/`:
+
+- `public/img/<slug>-1600.webp` e `-800.webp` — use em `srcset`. Slugs das fotos citadas
+  no briefing: **`hero`** (hero section), **`formacao`** (seção de formação médica),
+  **`whatsapp`**. As demais viram `foto-NN`.
+- `public/img/whatsapp-320.webp` — quadrada, já enquadrada no rosto, para o botão
+  flutuante recortado em círculo, ao lado da frase "Como posso ajudar?".
+- `public/img/logo/{horizontal,principal,simbolo,circular}-{azul,branco}.png` e os patterns.
+- `public/fonts/Cormorant-{Light,Regular}.woff2`.
+- `public/img/inst/{pucpr,iamspe,hcfmusp,fmusp}.png` — brasões das instituições,
+  exibidos como ícone circular de fundo branco ao lado de cada formação. O círculo
+  e o fundo são feitos em CSS, não estão gravados na imagem.
+- `public/img/inst/hosp-{santa-cruz,huem,o1saude,sao-camilo}.png` — as marcas dos
+  quatro locais de atendimento, no mesmo disco. Os originais vêm em duas famílias
+  e o build trata cada uma de um jeito:
+  - **Santa Cruz e São Camilo** são lockups (símbolo + palavra) sobre um branco
+    impuro. O quase-branco de baixa saturação é normalizado para branco puro
+    (senão vira um quadrado cinza dentro do disco) e o recorte fica **só no
+    símbolo** — a 52px a palavra é ilegível e ainda encolhe o símbolo até ele
+    sumir ao lado das outras marcas. As caixas foram medidas varrendo as linhas
+    com tinta do original até achar a folga que separa símbolo e palavra.
+  - **HUEM e O1** são quadrados de cor sangrada. Num disco branco virariam um
+    quadrado colorido flutuando; o CSS recorta em círculo
+    (`.local__marca--sangra`, sem padding) e a própria cor da marca vira o disco.
+  Esse passo precisa de **Pillow** (`pip3 install Pillow`) — é a única parte do
+  pipeline que não roda só com as ferramentas do sistema.
+- `public/img/rm-pescoco.webp` — corte sagital de ressonância do pescoço. É a marca
+  d'água do painel do menu mobile, cobrindo a altura toda: o território do próprio
+  médico, do crânio ao tórax. O painel **é** a imagem; o azul entra por cima num
+  `::before` com `mix-blend-mode: color`, que toma a luminância da ressonância e a
+  cor da tinta. O `brightness` no filtro e o `opacity: .8` existem só para o texto
+  manter contraste — medido em **6,2:1 no pior pixel** sob os links.
+
+**O botão flutuante some quando o convite final entra na tela.** `#contato`
+oferece o mesmo WhatsApp; com ele visível o flutuante é repetição — e, como o
+rodapé virou uma faixa estreita, ele passava por cima do nome e dos registros no
+celular. A regra está em `marcarFlutuante()`, junto com a da primeira dobra.
+
+**Não há logo dos Hospitais Cajuru (HUC) e Evangélico Mackenzie (HUEM).** Essa
+linha da formação usa o símbolo do próprio médico no lugar do brasão — o que
+também faz sentido, já que é sobre a prática dele hoje e não sobre um diploma. Se
+os brasões aparecerem, troque por eles.
+
+`hero` é a única foto em paisagem — todas as outras são retrato. Só 13 das 100 fotos
+foram selecionadas; é uma curadoria, não um acervo incompleto.
+
+## Animação do símbolo
+
+`public/img/simbolo-m.svg` e `simbolo-g.svg` desenham as letras M e G (as iniciais de
+Mario de Geus, que formam o símbolo) como se estivessem sendo escritas à mão.
+
+São **assets de origem, não saída de build** — o `build-assets.sh` não os gera. O contorno
+veio de vetorização das letras em `assets/instrucoes/animacao-simbolo/`, mas os caminhos de
+eixo dentro do `<mask>` foram desenhados à mão sobre a geometria da letra. Para ajustar,
+edite o SVG direto.
+
+**As duas letras ocupam a mesma caixa e o mesmo viewBox** (`106 175 787 649`).
+Sobrepostas, elas remontam exatamente o símbolo oficial — conferi compondo os dois
+arquivos de origem contra `Símbolo Azul.png`. Não as coloque lado a lado, e não
+recorte os viewBox individualmente: é a sobreposição que forma o logo.
+
+Como usar:
+
+**Onde ela vive: duas vezes na página.** Na hero, como marca d'água em claro
+(`.hero__marca`, `color: var(--papel)`, `opacity: .11`), escrita 0,9s depois do
+carregamento para não competir com a entrada do texto; e centralizada em
+`#contato`, atrás do convite (`.contato__monograma`, `opacity: .085`), disparada
+quando a seção chega. Nenhuma das duas tem seção própria — a assinatura teve, e
+foi absorvida. As duas são decorativas: `aria-hidden`, sem `role="img"`.
+
+**As SVGs estão inline no `index.html`, e os arquivos em `public/img/` são só a
+fonte.** Editar o `.svg` não muda a página: é preciso recopiar o conteúdo para as
+duas ocorrências do HTML. E na cópia da hero os ids de máscara levam sufixo
+(`tracado-m-hero`, `tracado-g-hero`), tanto no `id=` quanto no `mask="url(#…)"` —
+id de SVG é global no documento e, sem isso, a segunda cópia aponta para a máscara
+da primeira.
+
+- **Inline o SVG no HTML** (não `<img>`) — a animação é CSS e precisa do DOM.
+- As duas SVGs ficam em `position: absolute; inset: 0` dentro de um container com
+  `aspect-ratio: 787 / 649`. Nada de flex nem gap.
+- Adicione a classe `escrevendo` ao `<svg>` para disparar. Dispare por
+  `IntersectionObserver` quando a seção entrar na tela, não no load.
+- A cor vem de `currentColor`. As letras são escuras → **use sobre fundo claro** (`#E5EAE3`).
+- **Altura de 90% da seção só no desktop.** Abaixo de 820px a seção fica alta e
+  estreita: 90% da altura joga o símbolo para fora dos dois lados e ele deixa de
+  ser reconhecível. No mobile quem manda é a largura (`height: auto; width: 88%`),
+  e a altura vem do `aspect-ratio`.
+- **`opacity: .085` é o teto.** A marca d'água passa por baixo da chamada, que já
+  cai de 5.6:1 para 5.0:1 aí. Mexeu na opacidade, remeça.
+- Duração no atributo `data-duracao` (M: 1,7 s; G: 2,2 s). Para a sequência do briefing —
+  M primeiro, depois G — atrase o `escrevendo` do G em ~1,7 s.
+- `prefers-reduced-motion` já está tratado: a letra aparece inteira, sem animação.
+
+**A ordem e o sentido dos traços do G não são arbitrários.** A perninha (`t3`) e a
+haste vertical (`t4`) nascem no mesmo ponto (686, 358). Com a perninha desenhada
+**a partir** desse ponto, a ponta arredondada de 110 de largura acendia um pedaço
+da haste que ficava órfão na tela por meio segundo, até a haste ser escrita — o
+usuário viu e reclamou. Por isso a perninha é desenhada **de trás para frente**
+(`M 548 512 L 686 358`): ela parte da ponta livre, chega no canto, e a haste
+começa no instante seguinte e continua dali. Não inverta esse `d` de volta.
+
+## Pegadinhas
+
+- **O kit do Adobe Fonts é restrito por domínio.** `czr1bwa` só serve a `seravek-web` em
+  domínios cadastrados no web project. `localhost` já funciona (verificado), mas **o domínio
+  de produção precisa ser adicionado no painel do Adobe Fonts** — senão a fonte cai para o
+  fallback silenciosamente, sem erro no console. Confira no browser com
+  `document.fonts.check('400 18px "seravek-web"')`.
+- A família é **`seravek-web`** (grafia "Seravek"). O briefing escreve "Sevarek" — está errado.
+- **Nunca aponte o HTML para `assets/fotos-originais/`**: são 141 MB de JPEG de câmera.
+  Só `public/img/`.
+- Os arquivos em `assets/` têm acento e parênteses no nome (`Mario_estúdio (79 de 100).jpg`,
+  `Símbolo Azul.png`). O pipeline normaliza para slugs ASCII; o HTML usa só os slugs.
+- **Ids de SVG colidem se você inlinar o mesmo símbolo duas vezes na página** — o `<mask>`
+  do segundo passa a apontar para o do primeiro e a animação quebra. Se precisar repetir,
+  torne o id único.
+- **O `<style>` de um SVG inline vale para o documento inteiro.** As duas letras
+  usam as mesmas classes (`.t1`, `.tracado`), então sem escopo o style do G — que
+  vem depois no HTML — vencia para o M também, e o M rodava com a duração do G.
+  Por isso cada regra é prefixada por `.simbolo-letra--m` / `--g`. Se acrescentar
+  uma terceira letra ou símbolo animado, escope do mesmo jeito.
+- `stroke-dasharray` **reinicia a cada subpath** de um `<path>`. Por isso cada traço da
+  animação é um `<path>` separado com seu próprio `animation-delay`; não junte tudo num
+  `d` só achando que o dash vai atravessar em sequência.
+- **A navbar assentada é sólida de propósito.** Depois do scroll ela é fixa e cruza
+  seções claras e escuras com texto escuro. Qualquer transparência deixa o conteúdo
+  de baixo vazar por trás das palavras — foi testado e ficou ilegível.
+- **A foto da hero e o gradiente cobrem a seção inteira, de propósito.** Enquanto o
+  gradiente vivia dentro da coluna da foto, a borda dessa coluna aparecia como uma
+  linha vertical: de um lado ele terminava em `#272D3B` chapado, do outro o fundo
+  diagonal da seção estava noutro tom. Cobrindo tudo, não existe encontro possível.
+  Não devolva o gradiente para dentro da coluna.
+- **Emenda entre duas seções claras exige que as duas resolvam na mesma cor.** O
+  fundo da formação terminava em `--papel-frio` e as especialidades são `--papel`
+  chapado: os dois se encontravam numa linha horizontal. Tanto o fundo da seção
+  quanto o `::after` do painel da foto agora fecham em `--papel` **antes** da borda
+  (91–96%, não 100%) — fechar exatamente em 100% ainda deixa um traço na última
+  faixa de pixels. Verifique amostrando pixels acima e abaixo da fronteira; a
+  variação aceitável é ±1 (nível do grão).
+- **Fundo em gradiente aperta o contraste na ponta clara.** O `#locais` desce de
+  `#343B49` a `#202329`; a sobrancelha em `--papel-suave` fica justamente no topo,
+  o ponto mais claro, e a 4.24:1 reprovava. A ponta clara da rampa é o teto do que
+  o texto secundário aguenta ali — se clarear, remeça. Escurecer a ponta **escura**
+  é livre: só melhora o texto que estiver embaixo.
+- **`flex-basis: 100%` mais `margin` estoura a linha.** No mobile o "Ver no mapa"
+  desce para baixo do nome com `flex: 1 0 100%`; a indentação tem de ser `padding`,
+  que o `border-box` inclui nos 100%. Com `margin-left` a página ganhou 37px de
+  rolagem horizontal.
+- **Cuidado com seletores de elemento dentro de um bloco.** `.cidade span` tem
+  (0,1,1) e vencia `.local__mapa` (0,1,0), impondo ao rótulo o corpo do texto de
+  detalhe. Escopado como `.local__texto > span`. Mesma classe de armadilha da
+  navbar assentada, mas por tag em vez de por classe extra.
+- **`opacity` em texto é redução de contraste disfarçada.** O "Ver no mapa" a 75%
+  de opacidade caía para 3.0:1 sobre o gradiente. Hierarquia se faz com corpo,
+  espacejamento e caixa — não baixando a opacidade de texto pequeno.
+- **Elemento com fundo próprio engana a medição de contraste.** O harness esconde
+  o elemento e amostra o que está atrás; num botão sólido isso remove o próprio
+  fundo dele e a razão sai 1.00. Para botões preenchidos vale o valor nominal
+  (`--papel` sobre `--tinta`), não a amostra.
+- **A verificação por captura tem duas armadilhas, e eu caí nas duas.**
+  `page.screenshot({clip})` usa coordenadas de **documento**, não do viewport: sem
+  somar `window.scrollX/Y` ao `getBoundingClientRect()`, a amostra vem de outro
+  ponto da página e os números parecem plausíveis mesmo estando errados. E a
+  captura recortada **de um elemento** (`elemento.screenshot()`) desalinha a camada
+  de grão, que é `position: fixed`: aparece um degrau horizontal fantasma perto do
+  pé do recorte. Para conferir emenda ou gradiente, capture o **viewport** inteiro.
+- **Ler `getComputedStyle` logo depois de acrescentar `.revela--visivel` devolve
+  `opacity: 0`** — a transição leva 1,6s. Espere antes de medir, ou toda medida de
+  contraste sai como 1.00.
+- **A rampa da hero tem ~22 paradas.** Não é exagero: com poucas paradas o degrau
+  volta a aparecer como faixa. O grão também ajuda a mascarar banding.
+- **O médico é deslocado por `transform: translateX`, não por `object-position`.**
+  A imagem é mais estreita em proporção que o container, então não há corte lateral
+  e `object-position-x` é inerte ali. A faixa sem imagem à direita cai onde o
+  gradiente já é azul opaco.
+- No mobile `.hero__retrato` precisa ser `position: relative`. Com `static`, o
+  `::after` de `inset: 0` se ancorava na hero inteira e a foto cortava numa linha dura.
+- No desktop a foto da formação é **plano de fundo**, não retrato em destaque — vai
+  sob um véu leve mais um gradiente que a dissolve na borda que encosta no texto.
+  **No mobile ela não aparece**: sem largura para funcionar como plano de fundo, ela
+  virava um retrato solto que não somava nada.
+- `max-width` numa `.envelope` **centraliza a coluna**, porque a `.envelope` tem
+  `margin-inline: auto`. Para alinhar texto à esquerda dentro dela, use um filho
+  (`.formacao__corpo`), não as duas classes no mesmo elemento.
+- `<picture>` não herda altura: para uma foto de `height: 100%` funcionar, o
+  `<picture>` também precisa de `height: 100%`, senão o `img` resolve contra `auto`.
+- **A navbar clara escurece os links do menu.** `.navbar--assentada .menu__lista a`
+  tem especificidade (0,2,1); no mobile o painel aberto é escuro e precisa de um
+  seletor de **mesma** especificidade para devolver o claro — `.menu__lista a`
+  sozinho perde e o texto some no fundo.
+- As animações só escondem conteúdo quando a classe `js` está no `<html>` (um script
+  inline no `<head>` a coloca). Sem JS a página nasce inteira e visível — confira isso
+  antes de mexer nas regras `.entra` / `.revela`.

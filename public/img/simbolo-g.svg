@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="106 175 787 649" class="simbolo-letra simbolo-letra--g" data-duracao="2.2800000000000002" aria-hidden="true">
+  <style>
+    .simbolo-letra--g .tracado path {
+      fill: none; stroke: #fff; stroke-width: 110;
+      stroke-linecap: round; stroke-linejoin: round;
+      /* pathLength=1 normaliza o comprimento: o dash vai de 1 (oculto) a 0 (completo) */
+      stroke-dasharray: 1 1; stroke-dashoffset: 1;
+    }
+    @keyframes escrever-g { to { stroke-dashoffset: 0; } }
+    .simbolo-letra--g.escrevendo .t1 { animation: escrever-g 0.42s ease-in-out 0s forwards; }
+    .simbolo-letra--g.escrevendo .t2 { animation: escrever-g 0.8s ease-in-out 0.52s forwards; }
+    .simbolo-letra--g.escrevendo .t3 { animation: escrever-g 0.3s ease-in-out 1.42s forwards; }
+    .simbolo-letra--g.escrevendo .t4 { animation: escrever-g 0.56s ease-in-out 1.72s forwards; }
+    /* Sem animação: a letra já aparece inteira. */
+    @media (prefers-reduced-motion: reduce) {
+      .simbolo-letra .tracado path { stroke-dashoffset: 0; animation: none !important; }
+    }
+  </style>
+  <defs>
+    <mask id="tracado-g" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
+      <g class="tracado">
+      <path class="t1" pathLength="1" d="M 650 250 A 286 286 0 0 0 400 292"/>
+      <path class="t2" pathLength="1" d="M 303 408 A 286 286 0 0 0 668 781"/>
+      <path class="t3" pathLength="1" d="M 548 512 L 686 358"/>
+      <path class="t4" pathLength="1" d="M 686 358 L 676 794"/>
+      </g>
+    </mask>
+  </defs>
+  <path d="M 544.500 195.027 C 480.950 202.014, 422.562 227.235, 374.997 268.244 C 372.608 270.303, 370.845 272.127, 371.077 272.296 C 371.310 272.466, 378.322 278.544, 386.660 285.803 C 394.998 293.061, 402.071 299, 402.379 299 C 402.686 299, 407.178 295.686, 412.360 291.635 C 477.323 240.853, 562.128 223.131, 641.162 243.820 L 651.824 246.611 668.662 231.233 C 677.923 222.775, 685.628 215.504, 685.784 215.076 C 686.338 213.556, 658.765 204.678, 642 200.978 C 619.024 195.909, 608.624 194.818, 580 194.476 C 564.875 194.295, 548.900 194.543, 544.500 195.027 M 620.474 419.076 C 578.688 459.268, 539.869 496.752, 534.208 502.374 L 523.917 512.595 539.052 526.350 C 547.376 533.915, 554.583 539.968, 555.067 539.802 C 555.551 539.636, 577.850 518.350, 604.619 492.500 C 631.389 466.650, 653.676 445.350, 654.146 445.167 C 654.616 444.983, 655 516.778, 655 604.917 L 655 765 606.744 765 C 555.803 765, 544.123 764.296, 522.639 759.934 C 489.338 753.171, 457.727 739.994, 429.164 720.969 C 356.824 672.784, 313.694 596.025, 310.344 509.500 C 308.745 468.211, 317.138 427.396, 335.378 387.761 L 338.939 380.023 322.736 365.861 L 306.533 351.699 299.016 367.171 C 283.884 398.318, 275.047 428.366, 270.393 464.500 C 268.112 482.204, 268.112 518.796, 270.393 536.500 C 275.258 574.270, 283.811 602.684, 300.493 636.500 C 332.435 701.246, 385.082 751.699, 451.117 780.845 C 478.583 792.967, 511.528 801.980, 537.772 804.551 C 541.772 804.942, 545.286 805.654, 545.581 806.131 C 545.877 806.610, 579.952 807, 621.559 807 L 697 807 697 576.500 C 697 449.725, 696.876 346, 696.724 346 C 696.571 346, 662.259 378.884, 620.474 419.076" fill="currentColor" fill-rule="evenodd" mask="url(#tracado-g)"/>
+</svg>

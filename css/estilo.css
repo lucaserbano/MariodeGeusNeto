@@ -1,0 +1,1010 @@
+/* ══════════════════════════════════════════════════════════
+   Dr. Mario de Geus Neto — folha única
+   Paleta e tipografia vêm do manual de identidade (ver CLAUDE.md).
+   ══════════════════════════════════════════════════════════ */
+
+:root {
+  /* paleta do manual */
+  --tinta:        #272D3B;   /* azul-ardósia — fundo escuro e cor da logo sobre claro */
+  --papel:        #E5EAE3;   /* verde-claro acinzentado — fundo claro */
+  --pedra:        #88857C;   /* cinza-quente — só fio, régua e campo lavado */
+  --musgo:        #3F512B;   /* verde — só adorno */
+
+  /* derivadas: texto secundário com contraste suficiente (o #88857C não passa) */
+  --tinta-suave:  #4E5466;   /* texto secundário no claro. Escurecido para
+                                sobreviver às marcas d'água: 6.1:1 sobre o
+                                --papel limpo e 4.6:1 sobre o papel escurecido
+                                pela ressonância das especialidades. */
+  --papel-suave:  #B8BDB6;   /* 7.2:1 sobre --tinta  */
+  --papel-frio:   #DEE5E6;   /* ponte entre o fundo e o cinza da foto da hero */
+  --musgo-suave:  #DDE3D9;   /* texto secundário sobre o verde translúcido.
+                                A transparência clareia o fundo e derrubou
+                                este texto para 3.5:1 no primeiro ajuste. */
+  --papel-hero:   #D3D8D1;   /* texto secundário da hero: o símbolo em marca
+                                d'água escurece pontos do fundo e o tom normal
+                                não alcançava 4.5:1 em cima deles */   /* ponte entre o fundo e o cinza da foto da hero */
+
+  --display: "Cormorant", "Cormorant Garamond", Georgia, serif;
+  --texto:   "seravek-web", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --envelope: 1180px;
+  --respiro:  clamp(5rem, 9vw, 8.5rem);
+  --curva:    cubic-bezier(.22,.61,.36,1);
+  --curva-lenta: cubic-bezier(.16,.62,.22,1);
+  --nav:      92px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Grão: uma camada fixa de ruído fino sobre tudo, para tirar o aspecto
+   de cor chapada dos fundos e dos gradientes. */
+body::after {
+  content: "";
+  position: fixed; inset: 0; z-index: 300; pointer-events: none;
+  opacity: .11;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--texto);
+  font-size: 1.0625rem;
+  line-height: 1.72;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img, svg, picture { display: block; max-width: 100%; }
+img { height: auto; }
+
+:focus-visible {
+  outline: 2px solid var(--musgo);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.pular {
+  position: absolute; top: -100px; left: 1rem; z-index: 200;
+  background: var(--tinta); color: var(--papel);
+  padding: .7rem 1.1rem; text-decoration: none; border-radius: 3px;
+  transition: top .2s;
+}
+.pular:focus { top: 1rem; }
+
+/* ─────────────────────────────────────────────  tipografia  ── */
+
+@font-face {
+  font-family: "Cormorant"; src: url("../public/fonts/Cormorant-Light.woff2") format("woff2");
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Cormorant"; src: url("../public/fonts/Cormorant-Regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Cormorant"; src: url("../public/fonts/Cormorant-Medium.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Cormorant"; src: url("../public/fonts/Cormorant-SemiBold.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+
+h1, h2, h3 {
+  font-family: var(--display);
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: .065em;
+  line-height: 1.08;
+  margin: 0;
+  text-wrap: balance;
+}
+
+h1 { font-size: clamp(2.15rem, 3.7vw, 3.35rem); }
+h2 { font-size: clamp(2rem, 3.7vw, 3.15rem); }
+h3 { font-size: clamp(1.28rem, 1.9vw, 1.6rem); letter-spacing: .055em; }
+
+p { margin: 0; }
+
+.sobrancelha--lugar { display: flex; align-items: center; gap: .5rem; }
+.pino { width: 1.05em; height: 1.05em; flex: 0 0 auto; opacity: .85; }
+
+.sobrancelha {
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .2em;
+  color: var(--musgo);
+  margin-bottom: 1.5rem;
+}
+.secao--tinta .sobrancelha { color: var(--papel-suave); }
+
+.chamada {
+  font-size: clamp(1.05rem, 1.35vw, 1.19rem);
+  max-width: 60ch;
+  margin-top: 1.75rem;
+  color: var(--tinta-suave);
+}
+.chamada + .chamada { margin-top: 1.15rem; }
+.chamada--forte strong { font-weight: 600; color: var(--tinta); }
+.secao--tinta .chamada { color: var(--papel-suave); }
+
+.nota {
+  margin-top: 3.25rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid color-mix(in srgb, var(--pedra) 45%, transparent);
+  font-size: .95rem;
+  color: var(--tinta-suave);
+  max-width: 62ch;
+}
+.nota--clara { color: var(--papel-suave); }
+
+.registros {
+  font-size: .84rem;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--tinta-suave);
+  margin-top: 1.6rem;
+}
+.registros span { color: var(--pedra); margin: 0 .15rem; }
+
+/* ─────────────────────────────────────────────  estrutura  ── */
+
+.envelope {
+  width: min(100% - 2.5rem, var(--envelope));
+  margin-inline: auto;
+}
+
+.secao { padding-block: var(--respiro); }
+.secao--tinta  { background: var(--tinta); color: var(--papel); }
+.secao--papel  { background: var(--papel); color: var(--tinta); }
+
+/* âncoras não somem sob a navbar fixa */
+[id] { scroll-margin-top: calc(var(--nav) + 1rem); }
+
+.abertura { max-width: 46rem; }
+
+/* ────────────────────────────────────────────────  botões  ── */
+
+.botao {
+  display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
+  background: var(--tinta); color: var(--papel);
+  font-family: var(--texto); font-size: .92rem; font-weight: 400;
+  letter-spacing: .04em;
+  padding: .95rem 1.85rem;
+  border: 1px solid var(--tinta);
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background .35s var(--curva), color .35s var(--curva),
+              transform .35s var(--curva);
+}
+.botao:hover { background: transparent; color: var(--tinta); transform: translateY(-2px); }
+
+.botao--compacto { padding: .68rem 1.25rem; font-size: .84rem; }
+/* secundário: o WhatsApp é o CTA, o Instagram acompanha sem competir */
+.botao--contorno {
+  background: transparent; color: var(--tinta); border-color: var(--tinta);
+  gap: .55rem;
+}
+.botao--contorno:hover { background: var(--tinta); color: var(--papel); }
+
+/* O verde é cor de adorno na paleta, mas aqui ele é o secundário da hero:
+   sobre o azul escuro ele se distingue do CTA claro sem competir com ele. */
+.botao--verde {
+  background: var(--musgo); color: var(--papel); border-color: var(--musgo);
+}
+.botao--verde:hover {
+  background: transparent; color: var(--papel); border-color: var(--papel);
+}
+.botao__selo { width: 1.15em; height: 1.15em; flex: 0 0 auto; }
+.botao--grande   { padding: 1.15rem 2.4rem; font-size: 1rem; }
+
+.secao--tinta .botao {
+  background: var(--papel); color: var(--tinta); border-color: var(--papel);
+}
+.secao--tinta .botao:hover { background: transparent; color: var(--papel); }
+
+.elo {
+  color: inherit; text-decoration: none;
+  font-size: .95rem;
+  padding-bottom: .2rem;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition: background-size .4s var(--curva);
+}
+.elo:hover { background-size: 100% 1px; }
+
+/* ────────────────────────────────────────────────  navbar  ── */
+
+.navbar {
+  position: fixed; inset: 0 0 auto 0; z-index: 100;
+  transition: background .45s var(--curva), box-shadow .45s var(--curva);
+}
+.navbar--assentada {
+  background: var(--papel);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--pedra) 40%, transparent);
+}
+
+.navbar__interior {
+  width: min(100% - 2.5rem, var(--envelope));
+  margin-inline: auto;
+  height: var(--nav);
+  display: flex; align-items: center; justify-content: space-between; gap: 2rem;
+}
+
+.navbar__logo { display: block; position: relative; }
+.navbar__logo img { width: clamp(238px, 23vw, 304px); height: auto; }
+/* A hero é escura: no topo vale a logo branca. Depois do scroll a barra
+   fica clara e a logo volta a ser a azul. */
+.navbar__logo--escuro { position: absolute; inset: 0; opacity: 0; transition: opacity .4s var(--curva); }
+.navbar--assentada .navbar__logo--claro  { opacity: 0; }
+.navbar--assentada .navbar__logo--escuro { opacity: 1; }
+.navbar__logo--claro { transition: opacity .4s var(--curva); }
+
+.menu { display: flex; align-items: center; gap: clamp(1.4rem, 2.8vw, 2.6rem); }
+.menu__lista {
+  display: flex; align-items: center; gap: clamp(1.15rem, 2.2vw, 2.1rem);
+  list-style: none; margin: 0; padding: 0;
+}
+.menu__lista a {
+  color: var(--papel); text-decoration: none;
+  font-size: .9rem; letter-spacing: .03em;
+  padding-bottom: .2rem;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px; background-repeat: no-repeat; background-position: 0 100%;
+  transition: background-size .35s var(--curva), color .4s var(--curva);
+}
+.menu__lista a:hover { background-size: 100% 1px; }
+.navbar--assentada .menu__lista a { color: var(--tinta); }
+
+/* botão do topo: claro sobre a hero escura, escuro depois do scroll */
+.navbar .botao {
+  background: var(--papel); color: var(--tinta); border-color: var(--papel);
+  transition: background .4s var(--curva), color .4s var(--curva), border-color .4s var(--curva);
+}
+.navbar .botao:hover { background: transparent; color: var(--papel); }
+.navbar--assentada .botao { background: var(--tinta); color: var(--papel); border-color: var(--tinta); }
+.navbar--assentada .botao:hover { background: transparent; color: var(--tinta); }
+
+/* marca d'água do painel mobile: só aparece com o menu aberto */
+.menu__rm { display: none; }
+
+.navbar__botao { display: none; }
+
+/* ──────────────────────────────────────────────────  hero  ── */
+
+/* Fundo azul: o retrato tem fundo claro e vira um painel de luz recortado
+   contra a noite. O gradiente da direita costura a foto ao fundo. */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .82fr);
+  align-items: center;
+  background: var(--tinta);
+  color: var(--papel);
+  overflow: hidden;
+}
+
+/* Símbolo em marca d'água: 90% da altura da seção, encostado à direita,
+   por cima do gradiente e por baixo do texto. */
+.hero__marca {
+  position: absolute; z-index: 1;
+  top: 0; right: -3%;
+  height: 100%; aspect-ratio: 787 / 649;   /* o viewBox comum das duas letras */
+  color: var(--papel);                      /* as letras vêm de currentColor */
+  opacity: .11; pointer-events: none; user-select: none;
+  /* A opacidade cai da direita para a esquerda, acompanhando o gradiente
+     azul: o símbolo é mais presente onde o fundo já é sólido e some antes
+     de chegar na foto. */
+  -webkit-mask-image: linear-gradient(to left,
+      #000 0%, rgb(0 0 0 / .82) 18%, rgb(0 0 0 / .58) 38%,
+      rgb(0 0 0 / .32) 58%, rgb(0 0 0 / .12) 78%, transparent 96%);
+          mask-image: linear-gradient(to left,
+      #000 0%, rgb(0 0 0 / .82) 18%, rgb(0 0 0 / .58) 38%,
+      rgb(0 0 0 / .32) 58%, rgb(0 0 0 / .12) 78%, transparent 96%);
+}
+
+.hero__texto {
+  grid-column: 2;
+  position: relative; z-index: 2;
+  padding: calc(var(--nav) + 2.5rem) max(1.25rem, calc(50vw - var(--envelope) / 2))
+           3.5rem clamp(1.5rem, 3vw, 2.5rem);
+  max-width: 47rem;
+  justify-self: start;
+  width: 100%;
+}
+
+.hero .sobrancelha { color: var(--papel-hero); }
+/* Único título em caixa mista do site: a frase é longa demais para caixa
+   alta e as duas palavras-chave precisam sobressair pelo peso. */
+.hero__titulo {
+  margin-bottom: 0; text-wrap: pretty;
+  text-transform: none;
+  letter-spacing: .005em;
+  font-size: clamp(2.4rem, 4.1vw, 3.7rem);
+  line-height: 1.16;
+}
+.hero__titulo em { font-style: normal; font-weight: 600; }
+
+/* Mesmo tratamento do título da hero: caixa mista, entrelinha fechada e
+   quase nenhum espacejamento — o oposto das versais espaçadas do resto. */
+.formacao h2,
+#especialidades h2,
+#especialidades h3,
+#locais h2,
+#contato h2 {
+  text-transform: none;
+  letter-spacing: .005em;
+  line-height: 1.16;
+}
+.formacao h2, #especialidades h2, #locais h2, #contato h2 {
+  font-size: clamp(2.1rem, 3.4vw, 3.05rem);
+}
+/* mesmo destaque por peso da hero: as duas palavras que contam a escala */
+#locais h2 em { font-style: normal; font-weight: 600; }
+#especialidades h3 { font-size: clamp(1.35rem, 2vw, 1.7rem); letter-spacing: .01em; }
+.hero__chamada { margin-top: 1.9rem; max-width: 40ch; color: var(--papel-hero); }
+.hero .registros { color: var(--papel-hero); }
+.hero .registros span { color: var(--pedra); }
+
+.hero__acoes {
+  margin-top: 2.6rem;
+  display: flex; align-items: center; gap: 1.75rem; flex-wrap: wrap;
+}
+.hero .botao { background: var(--papel); color: var(--tinta); border-color: var(--papel); }
+.hero .botao:hover { background: transparent; color: var(--papel); }
+/* Mesma especificidade da regra acima (0,2,0) e depois dela no arquivo:
+   `.botao--verde` sozinho é (0,1,0) e perde, e o botão saía claro. */
+.hero .botao--verde {
+  background: var(--musgo); color: var(--papel); border-color: var(--musgo);
+}
+.hero .botao--verde:hover {
+  background: transparent; color: var(--papel); border-color: var(--papel);
+}
+
+/* A foto E o gradiente cobrem a hero inteira. Enquanto o gradiente vivia só
+   dentro da coluna da foto, a borda dessa coluna aparecia como uma linha
+   vertical: de um lado o gradiente terminava em #272D3B chapado, do outro o
+   fundo diagonal da seção estava noutro tom. Cobrindo tudo, não há encontro. */
+.hero__retrato { position: absolute; inset: 0; z-index: 0; }
+.hero__retrato picture { display: block; height: 100%; }
+.hero__retrato img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: 30% 46%;
+  /* Sem corte lateral, object-position-x é inerte aqui. O translate é o que
+     de fato tira o médico do meio e o joga para a esquerda. A faixa que fica
+     sem imagem à direita cai onde o gradiente já é azul opaco. */
+  transform: translateX(-16%);
+}
+.hero__retrato::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    /* sopro diagonal: devolve a variação de cor que o fundo tinha */
+    linear-gradient(157deg,
+      rgb(60 70 92 / .30) 0%, rgb(52 61 80 / .12) 26%,
+      rgb(39 45 59 / 0) 52%, rgb(24 29 39 / .22) 100%),
+    /* rampa horizontal: 22 paradas para não formar degrau nem faixa */
+    linear-gradient(to right,
+      rgb(39 45 59 / 0)    0%,  rgb(39 45 59 / .01)  6%,
+      rgb(39 45 59 / .02) 11%,  rgb(39 45 59 / .04) 16%,
+      rgb(39 45 59 / .07) 21%,  rgb(39 45 59 / .10) 25%,
+      rgb(39 45 59 / .14) 29%,  rgb(39 45 59 / .19) 33%,
+      rgb(39 45 59 / .25) 36%,  rgb(39 45 59 / .32) 39%,
+      rgb(39 45 59 / .40) 42%,  rgb(39 45 59 / .48) 45%,
+      rgb(39 45 59 / .57) 47%,  rgb(39 45 59 / .65) 49%,
+      rgb(39 45 59 / .73) 51%,  rgb(39 45 59 / .81) 53%,
+      rgb(39 45 59 / .87) 55%,  rgb(39 45 59 / .92) 57%,
+      rgb(39 45 59 / .96) 59%,  rgb(39 45 59 / .985) 61%,
+      rgb(39 45 59 / .997) 63%, rgb(39 45 59 / 1) 66%);
+}
+
+/* ──────────────────────────────────────────────  formação  ── */
+/* Claro, alternando com a hero escura. A foto é plano de fundo da metade
+   direita, dissolvida no papel por um gradiente. */
+
+/* formação e especialidades são ambas claras: sem isto a folga entre elas
+   vira o dobro e o corte some */
+.formacao { padding-bottom: clamp(3rem, 5vw, 4.5rem); }
+#especialidades { padding-top: clamp(3.5rem, 6vw, 5.5rem); }
+
+.formacao {
+  position: relative;
+  background:
+    /* O fundo diagonal termina em --papel-frio na direita, e a seção seguinte
+       é --papel chapado: os dois se encontravam numa linha horizontal. Esta
+       camada resolve tudo em --papel antes da borda, dos dois lados. */
+    linear-gradient(to bottom, var(--papel) 0%, transparent 14%,
+                    transparent 72%, var(--papel) 96%, var(--papel) 100%),
+    linear-gradient(100deg, var(--papel) 0%, var(--papel) 55%, var(--papel-frio) 100%);
+  color: var(--tinta);
+  overflow: hidden;
+}
+
+.formacao .envelope { position: relative; z-index: 2; }
+.formacao__corpo { max-width: 39rem; }
+
+.formacao__retrato { position: absolute; inset: 0 0 0 auto; width: 46%; z-index: 1; }
+.formacao__retrato img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: 50% 50%;
+}
+.formacao__retrato::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    /* véu leve: recua a foto sem lavar o rosto */
+    linear-gradient(rgb(229 234 227 / .20), rgb(229 234 227 / .20)),
+    /* dissolve na borda que encosta no texto */
+    linear-gradient(to right, var(--papel) 0%, rgb(229 234 227 / .82) 26%,
+                    rgb(229 234 227 / .20) 60%, transparent 92%),
+    /* dissolve no topo e no pé da seção */
+    /* Fechar só em 100% deixava um traço da foto na última faixa de pixels,
+       e era isso que virava a linha do corte entre as duas seções claras. */
+    linear-gradient(to bottom, var(--papel) 0%, transparent 22%,
+                    transparent 64%, var(--papel) 91%, var(--papel) 100%);
+}
+
+/* lista de formações: cada uma com o brasão da instituição */
+.titulos { list-style: none; margin: 3rem 0 0; padding: 0; }
+.titulos li {
+  padding: 1.3rem 0;
+  border-top: 1px solid color-mix(in srgb, var(--pedra) 40%, transparent);
+  display: flex; align-items: center; gap: 1.15rem;
+}
+.titulos li:last-child { border-bottom: 1px solid color-mix(in srgb, var(--pedra) 40%, transparent); }
+
+.titulos__marca {
+  flex: 0 0 auto;
+  width: 62px; height: 62px; border-radius: 50%;
+  background: #fff;
+  border: 1px solid color-mix(in srgb, var(--pedra) 32%, transparent);
+  display: grid; place-items: center;
+  padding: 9px;
+  box-shadow: 0 2px 10px rgb(39 45 59 / .06);
+}
+.titulos__marca img { max-width: 100%; max-height: 100%; object-fit: contain; }
+/* a última linha é sobre a prática dele hoje, não sobre um diploma:
+   leva o próprio símbolo no lugar do brasão de uma instituição */
+.titulos__marca--propria { padding: 13px; }
+
+.titulos__texto { display: grid; gap: .28rem; min-width: 0; }
+.titulos strong {
+  font-weight: 400; font-size: .78rem;
+  text-transform: uppercase; letter-spacing: .17em;
+  color: var(--tinta);
+}
+.titulos__texto > span { color: var(--tinta-suave); font-size: .95rem; line-height: 1.55; }
+
+/* Ressonância em marca d'água, encostada à direita e dissolvida pela
+   esquerda para não brigar com o texto. Mesma imagem do painel do menu. */
+#especialidades { position: relative; overflow: hidden; }
+/* a marca d'água fica atrás; o conteúdo da régua sobe para o z-index 1 */
+.territorio > .regioes, .territorio > .territorio__extremo { position: relative; z-index: 1; }
+.especialidades__marca {
+  position: absolute; z-index: 0; pointer-events: none; user-select: none;
+  /* Caixa fixa na metade direita + object-position para escolher o corte.
+     Antes a imagem inteira transbordava a seção e a máscara caía sobre o
+     dorso do paciente; com o recorte dá para pedir o perfil de frente. */
+  /* Vive dentro do .territorio: a altura dela é exatamente a da régua, de
+     "crânio" a "tórax". `right: calc(50% - 50vw)` a leva do envelope até a
+     borda direita da tela.
+     A frente do paciente (nariz, lábios, queixo) está nos primeiros ~25% da
+     ressonância; a coluna fica em 40-60% e o dorso depois. A janela de
+     `cover` cobre só esse trecho inicial. */
+  top: 0; bottom: 0; right: calc(50% - 50vw);
+  width: min(52vw, 760px); height: 100%;
+  object-fit: cover; object-position: 0% 50%;
+  /* O que faz a ressonância ser reconhecível é o contraste interno, não a
+     opacidade bruta: ela é uma imagem escura de estruturas claras sobre um
+     fundo claro. Estreitar demais a caixa cortava o perfil e virava borrão. */
+  opacity: .36;
+  filter: grayscale(1) contrast(1.8) brightness(1.08);
+  /* Radial: dissolve nas quatro direções. Uma máscara só horizontal deixava
+     as bordas de cima e de baixo retas, e a de cima virava uma linha na
+     emenda com a formação. */
+  /* Os raios têm de zerar DENTRO da caixa, senão a máscara ainda vale nas
+     bordas e a imagem termina numa linha reta. Com centro em 66% e raio X
+     de 58%, ela morre junto da borda esquerda; o raio Y de 50% faz o mesmo
+     em cima e embaixo. À direita ela extrapola de propósito, para a imagem
+     sangrar na borda da tela. */
+  -webkit-mask-image: radial-gradient(ellipse 56% 50% at 58% 50%,
+      #000 16%, rgb(0 0 0 / .78) 46%, rgb(0 0 0 / .34) 74%, transparent 100%);
+          mask-image: radial-gradient(ellipse 56% 50% at 58% 50%,
+      #000 16%, rgb(0 0 0 / .78) 46%, rgb(0 0 0 / .34) 74%, transparent 100%);
+}
+
+
+/* ───────────────────────────────────  território (a régua)  ── */
+/* O fio vertical é a frase do próprio médico: "praticamente todas as
+   afecções entre o crânio e o tórax". As regiões descem o corpo. */
+
+.territorio { position: relative; margin-top: clamp(3.5rem, 6vw, 5.5rem); padding-left: 3.1rem; }
+.territorio::before {
+  content: ""; position: absolute; left: 4px; top: 1.55rem; bottom: 1.55rem;
+  width: 1px;
+  background: linear-gradient(to bottom,
+              transparent 0%, var(--pedra) 6%, var(--pedra) 94%, transparent 100%);
+}
+.territorio__extremo {
+  font-size: .72rem; text-transform: uppercase; letter-spacing: .22em;
+  color: var(--tinta-suave);
+  margin-left: -3.1rem;
+}
+.territorio__extremo:last-child { margin-top: 1.2rem; }
+.territorio__extremo:first-child { margin-bottom: 1.2rem; }
+
+.regioes { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(2.6rem, 4vw, 3.6rem); }
+
+.regiao { position: relative; }
+.regiao::before {
+  content: ""; position: absolute; left: -3.1rem; top: .52em;
+  margin-left: 1px; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--musgo);
+  box-shadow: 0 0 0 6px var(--papel);
+}
+.regiao ul {
+  list-style: none; margin: 1.05rem 0 0; padding: 0;
+  columns: 2; column-gap: 2.75rem;
+  color: var(--tinta-suave);
+}
+.regiao ul li {
+  break-inside: avoid;
+  padding-left: 1.05rem; position: relative;
+  margin-bottom: .5rem; font-size: .98rem; line-height: 1.6;
+}
+.regiao ul li::before {
+  content: ""; position: absolute; left: 0; top: .72em;
+  width: 5px; height: 1px; background: var(--pedra);
+}
+
+/* ──────────────────────────────────────────────  oncologia  ── */
+
+.oncologia {
+  margin-top: clamp(3.5rem, 6vw, 5rem);
+  padding: clamp(2rem, 4vw, 3.1rem);
+  /* verde com transparência: o papel da seção sobe por baixo e tira o
+     aspecto de bloco chapado */
+  background: color-mix(in srgb, var(--musgo) 95%, transparent);
+  color: var(--papel);
+  border-radius: 4px;
+  position: relative; overflow: hidden;
+}
+/* O símbolo assina o bloco pelo canto, na versão estática — a animada já
+   aparece duas vezes na página. Sangra pela borda de propósito. */
+.oncologia__marca {
+  position: absolute; z-index: 0; pointer-events: none; user-select: none;
+  right: 3.5%; bottom: 6%;
+  width: clamp(160px, 26%, 320px); height: auto;
+  opacity: .085;
+}
+.oncologia > *:not(.oncologia__marca) { position: relative; z-index: 1; }
+.oncologia h3 { color: var(--papel); }
+.oncologia p { margin-top: 1.1rem; max-width: 58ch; color: var(--musgo-suave); }
+.oncologia ul {
+  list-style: none; margin: 1.75rem 0 0; padding: 0;
+  columns: 2; column-gap: 2.75rem; color: var(--musgo-suave);
+}
+.oncologia ul li {
+  break-inside: avoid; padding-left: 1.05rem; position: relative;
+  margin-bottom: .5rem; font-size: .98rem; line-height: 1.6;
+}
+.oncologia ul li::before {
+  content: ""; position: absolute; left: 0; top: .72em;
+  width: 5px; height: 1px; background: color-mix(in srgb, var(--papel) 55%, transparent);
+}
+
+/* ────────────────────────────────────────────────  locais  ── */
+
+/* O azul chapado ficava pesado numa seção de quatro blocos. Aqui ele
+   desce do tom mais claro no alto para o mais escuro no pé — sempre o
+   mesmo azul-ardósia, só variando a luminosidade. As paradas são muitas
+   de propósito: com poucas, o degrau volta a aparecer como faixa. */
+/* Marca d'água do pin: à direita, sangrando na borda da tela, atrás do
+   conteúdo. Mesmo tratamento da ressonância nas especialidades — a máscara
+   é radial e zera dentro da caixa à esquerda, em cima e embaixo; só à
+   direita ela extrapola de propósito, para sangrar sem linha reta. */
+#locais { position: relative; overflow: hidden; }
+#locais .envelope { position: relative; z-index: 1; }
+.locais__marca {
+  position: absolute; z-index: 0; pointer-events: none; user-select: none;
+  top: 71%; transform: translateY(-50%);
+  right: calc(50% - 50vw - 6vw);
+  height: 92%; width: auto; max-width: none;
+  opacity: .07;
+  -webkit-mask-image: radial-gradient(ellipse 62% 54% at 62% 50%,
+      #000 22%, rgb(0 0 0 / .74) 52%, rgb(0 0 0 / .3) 78%, transparent 100%);
+          mask-image: radial-gradient(ellipse 62% 54% at 62% 50%,
+      #000 22%, rgb(0 0 0 / .74) 52%, rgb(0 0 0 / .3) 78%, transparent 100%);
+}
+
+#locais {
+  background:
+    linear-gradient(168deg,
+      #343B49 0%, #333947 7%, #313844 14%, #303642 21%,
+      #2E3440 29%, #2D323E 36%, #2B313B 43%, #2A2F39 50%,
+      #292D37 57%, #272C34 64%, #262A32 71%, #242830 79%,
+      #23262E 86%, #21252B 93%, #202329 100%);
+}
+
+.cidades {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(2rem, 5vw, 4.5rem);
+  margin-top: clamp(3rem, 5vw, 4.5rem);
+}
+.cidade h3 { display: flex; align-items: baseline; gap: .7rem; }
+.cidade h3 span {
+  font-family: var(--texto); font-size: .68rem; letter-spacing: .2em;
+  /* --pedra dá só 3.0:1 sobre o escuro: serve para fio, não para texto */
+  color: var(--papel-suave);
+}
+.cidade ul { list-style: none; margin: 1.75rem 0 0; padding: 0; }
+.cidade ul li {
+  border-top: 1px solid color-mix(in srgb, var(--pedra) 40%, transparent);
+}
+.cidade ul li:last-child { border-bottom: 1px solid color-mix(in srgb, var(--pedra) 40%, transparent); }
+
+/* cada endereço é um link para o Google Maps */
+.local {
+  display: flex; align-items: center; gap: 1.05rem;
+  padding: 1.15rem .75rem 1.15rem 0;
+  color: inherit; text-decoration: none;
+  border-radius: 4px;
+  transition: background .35s var(--curva), padding-left .35s var(--curva);
+}
+.local:hover, .local:focus-visible {
+  background: color-mix(in srgb, var(--papel) 7%, transparent);
+  padding-left: .75rem;
+}
+
+/* Mesmo disco dos brasões da formação. Duas famílias de original:
+   marca escura sobre branco (disco branco, com folga) e quadrado de cor
+   sangrada (o CSS recorta em círculo e a cor da marca vira o disco). */
+.local__marca {
+  flex: 0 0 auto;
+  width: 52px; height: 52px; border-radius: 50%;
+  background: #fff;
+  display: grid; place-items: center;
+  padding: 8px;
+  overflow: hidden;
+}
+.local__marca img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.local__marca--sangra { padding: 0; }
+.local__marca--sangra img { width: 100%; height: 100%; object-fit: cover; max-width: none; max-height: none; }
+
+.local__texto { display: grid; gap: .22rem; min-width: 0; flex: 1 1 auto; }
+.cidade strong { font-weight: 400; font-size: 1.02rem; }
+/* Escopado no filho direto: `.cidade span` tem (0,1,1) e venceria o
+   `.local__mapa` (0,1,0), impondo a ele o tamanho do detalhe. */
+.local__texto > span { color: var(--papel-suave); font-size: .88rem; }
+
+/* A nota herda `max-width: 62ch`, o que dava a ela exatamente a largura da
+   coluna de Curitiba: o fio de cima caía alinhado com os fios da lista e
+   lia como mais um item, vazio. Atravessando as duas colunas, o fio volta
+   a ser o que é — o rodapé da seção. */
+#locais .nota { max-width: none; margin-top: 4rem; }
+
+.local__mapa {
+  flex: 0 0 auto;
+  display: inline-flex; align-items: center; gap: .35rem;
+  font-size: .78rem; letter-spacing: .08em; text-transform: uppercase;
+  /* Sem `opacity` aqui: a 75% o rótulo se mistura ao fundo e cai para
+     3.0:1. A diferença de hierarquia já vem do corpo menor e das versais.
+     E o tom é o `--papel-hero`, não o `--papel-suave`: este rótulo fica na
+     borda direita da coluna, bem em cima da calota do pin, e no tom mais
+     escuro caía para 4.3:1 — o mesmo motivo que criou o token na hero. */
+  color: var(--papel-hero);
+  transition: color .35s var(--curva);
+}
+.local__mapa .pino { width: .95em; height: .95em; opacity: 1; }
+.local:hover .local__mapa, .local:focus-visible .local__mapa { color: var(--papel); }
+
+/* ───────────────────────────────────────────────  contato  ── */
+
+/* O símbolo — o M e o G sobrepostos — é escrito à mão no centro da seção,
+   por trás do convite. É marca d'água: fica em opacidade baixa e o texto
+   passa por cima. A altura é 90% da seção; a largura vem do viewBox comum
+   das duas letras. */
+.contato { position: relative; overflow: hidden; }
+.contato__monograma {
+  position: absolute; z-index: 0; pointer-events: none; user-select: none;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  height: 90%;
+  aspect-ratio: 787 / 649;   /* o viewBox comum das duas letras */
+  color: var(--tinta);
+  opacity: .07;
+}
+/* As duas letras compartilham a mesma caixa e o mesmo viewBox: empilhadas,
+   remontam o símbolo. Não use flex nem gap aqui — elas não ficam lado a lado. */
+.monograma__letra { position: absolute; inset: 0; display: block; }
+.monograma__letra svg { width: 100%; height: 100%; }
+
+.contato__interior { position: relative; z-index: 1; max-width: 44rem; }
+/* Centralizados na tela: a coluna de 44rem já é centrada pelo `.envelope`,
+   então centrar dentro dela basta. E os dois com a mesma largura — o
+   `min-width` é ditado pelo rótulo mais longo, não pelo conteúdo de cada um. */
+.contato__acoes {
+  margin-top: 2.75rem;
+  display: flex; align-items: center; justify-content: center;
+  gap: 1.25rem; flex-wrap: wrap;
+}
+.contato__acoes .botao { min-width: 16.5rem; }
+
+/* ────────────────────────────────────────────────  rodapé  ── */
+
+/* Fecho, não seção: uma faixa estreita com o nome e os registros. A logo
+   sai porque ela já abre a página na navbar. */
+.rodape { background: var(--tinta); color: var(--papel); padding-block: 1.6rem; }
+.rodape__interior {
+  display: flex; flex-direction: column; align-items: center;
+  gap: .45rem; text-align: center;
+}
+.rodape__nome {
+  font-family: var(--display); font-weight: 300;
+  text-transform: uppercase; letter-spacing: .16em;
+  font-size: 1.02rem;
+}
+.rodape__registros {
+  font-size: .74rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--papel-suave);
+}
+.rodape__registros span { color: var(--pedra); }
+
+/* ────────────────────────────────────  whatsapp flutuante  ── */
+
+.flutuante {
+  position: fixed; right: clamp(1rem, 2.5vw, 1.9rem); bottom: clamp(1rem, 2.5vw, 1.9rem);
+  z-index: 90;
+  display: flex; align-items: center; gap: .8rem;
+  text-decoration: none; color: var(--tinta);
+  opacity: 0; visibility: hidden; transform: translateY(14px);
+  transition: opacity .5s var(--curva), transform .5s var(--curva), visibility .5s;
+}
+.flutuante--visivel { opacity: 1; visibility: visible; transform: none; }
+
+.flutuante__balao {
+  display: flex; align-items: center; gap: .55rem;
+  background: var(--papel);
+  border: 1px solid color-mix(in srgb, var(--pedra) 45%, transparent);
+  border-radius: 999px;
+  padding: .55rem 1.05rem .55rem .6rem;
+  font-size: .88rem; white-space: nowrap;
+  box-shadow: 0 8px 24px rgb(39 45 59 / .13);
+}
+.flutuante__selo {
+  flex: 0 0 auto;
+  width: 26px; height: 26px; padding: 5px;
+  background: var(--musgo); color: var(--papel);
+  border-radius: 50%; box-sizing: border-box;
+}
+
+.flutuante__retrato {
+  position: relative; display: block;
+  width: 62px; height: 62px; border-radius: 50%;
+  box-shadow: 0 8px 24px rgb(39 45 59 / .22);
+  transition: transform .4s var(--curva);
+}
+.flutuante__retrato img { border: 2px solid var(--papel); }
+.flutuante:hover .flutuante__retrato { transform: scale(1.05); }
+.flutuante__retrato img {
+  width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+}
+
+/* ─────────────────────────────────────────────  animações  ── */
+/* Só escondem quando o JS está vivo — sem JS, tudo nasce visível. */
+
+.js .entra, .js .revela {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 1.6s var(--curva-lenta), transform 1.6s var(--curva-lenta);
+}
+.js .entra--dentro, .js .revela--visivel { opacity: 1; transform: none; }
+
+/* ───────────────────────────────────────────  responsivo  ── */
+
+@media (max-width: 1000px) {
+  .regiao ul, .oncologia ul { columns: 1; }
+}
+
+/* Numa coluna estreita o rótulo disputa largura com o nome do hospital e
+   o "Hospital Evangélico Mackenzie" quebra em duas linhas espremidas.
+   Aqui ele desce para baixo do nome, alinhado com ele. */
+@media (max-width: 640px) {
+  .local { flex-wrap: wrap; row-gap: .5rem; }
+  .local__texto { flex: 1 1 60%; }
+  .local__mapa {
+    flex: 1 0 100%;
+    padding-left: calc(52px + 1.05rem);
+  }
+  /* o fio da lista já fecha a seção; um segundo fio logo abaixo, da mesma
+     largura, lia como um item vazio */
+  #locais .nota { border-top: 0; padding-top: 0; margin-top: 2.75rem; }
+}
+
+@media (max-width: 900px) {
+  .cidades { grid-template-columns: 1fr; }
+  .formacao__corpo { max-width: none; }
+  /* sem largura para ela funcionar como plano de fundo, a foto só atrapalha */
+  .formacao__retrato { display: none; }
+  .formacao { background: var(--papel); }
+}
+
+@media (max-width: 820px) {
+  :root { --nav: 76px; }
+
+  /* Numa coluna estreita a seção fica alta e 90% da altura joga o símbolo
+     para fora dos dois lados da tela — ele deixa de ser reconhecível. Aqui
+     quem manda é a largura; a altura vem do aspect-ratio. */
+  .contato__monograma { height: auto; width: 88%; }
+
+  /* a barra é sempre clara no mobile, então vale sempre a logo azul */
+  .navbar {
+    background: var(--papel);
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--pedra) 30%, transparent);
+  }
+  .navbar__logo img { width: clamp(186px, 52vw, 232px); }
+  .navbar__logo--claro  { opacity: 0; }
+  .navbar__logo--escuro { opacity: 1; }
+
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    background: linear-gradient(168deg, #1E2431 0%, var(--tinta) 55%, #333B4D 100%);
+  }
+  /* nada de cortar a cabeça: a foto entra na proporção original,
+     abaixo da navbar, e só se dissolve no azul por baixo. */
+  /* `relative`, não `static`: o ::after com inset:0 precisa se ancorar na
+     foto. Estático, ele se ancorava na hero inteira e o gradiente de
+     dissolução caía fora da imagem — a foto cortava numa linha dura. */
+  .hero__retrato { position: relative; min-height: 0; height: auto; padding-top: var(--nav); }
+  .hero__retrato picture { height: auto; }
+  /* A massa escura do médico ocupa 18–55% da largura da foto, centrada em
+     36%: fora do meio. Com a caixa em 3/2 — a proporção exata da imagem — não
+     havia corte lateral e o `object-position` não fazia nada. A caixa quadrada
+     corta as laterais (1,5x de aproximação) e aí o enquadramento passa a
+     valer. O 19% sai da conta: com `cover`, um ponto na fração f da imagem
+     cai em 1,5f − 0,5p da caixa, e centrar a cabeça (f = 0,396, medida na
+     imagem) pede p = 3f − 1. Se mudar a foto ou a proporção da caixa, refaça
+     a conta — chutar aqui é o que deixa ele fora do meio. */
+  .hero__retrato img { aspect-ratio: 1 / 1; height: auto; object-position: 19% 50%; }
+  .hero__retrato::after {
+    background: linear-gradient(to bottom,
+      rgb(39 45 59 / .16)  0%, rgb(39 45 59 / .04) 10%, rgb(39 45 59 / 0) 22%,
+      rgb(39 45 59 / .06) 40%, rgb(39 45 59 / .16) 52%, rgb(39 45 59 / .30) 62%,
+      rgb(39 45 59 / .48) 71%, rgb(39 45 59 / .66) 79%, rgb(39 45 59 / .82) 86%,
+      rgb(39 45 59 / .93) 92%, rgb(39 45 59 / .98) 96%, rgb(39 45 59 / 1) 100%);
+  }
+  .hero__texto {
+    grid-column: 1;
+    padding: 0 1.25rem 4.5rem;
+    margin-top: -5%;
+    justify-self: stretch;
+    max-width: none;
+  }
+  .hero__chamada { max-width: none; }
+  /* sobre a foto, o tom suave não alcança contraste: aqui vale o claro cheio */
+  .hero .sobrancelha { color: var(--papel); }
+  .hero__retrato img { transform: none; }
+
+  /* Cada frase numa linha só: duas linhas no total, e a hero encolhe junto. */
+  .hero__titulo { font-size: clamp(1.5rem, 7.1vw, 1.95rem); }
+
+  /* empilhado, o símbolo fica centralizado e desmaia para as duas bordas */
+  .hero__marca {
+    height: auto; width: 112%;
+    left: 50%; right: auto; top: 52%; transform: translate(-50%, -50%);
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 38%, transparent 82%);
+            mask-image: radial-gradient(ellipse at center, #000 38%, transparent 82%);
+  }
+  .especialidades__marca { width: 72vw; opacity: .15; object-position: 10% 50%; }
+
+  /* Numa coluna alta e estreita, 92% da altura faz o pin cobrir o texto todo
+     e virar um borrão sem forma. Aqui ele é dimensionado pela largura e vai
+     para a folga do canto inferior direito. */
+  .locais__marca {
+    top: auto; bottom: 2%; transform: none;
+    right: -10%;
+    height: auto; width: 78%;
+    opacity: .08;
+  }
+
+  /* menu vira painel */
+  .navbar__botao {
+    display: flex; align-items: center; gap: .6rem;
+    background: none; border: 0; padding: .5rem 0; cursor: pointer;
+    font-family: var(--texto); font-size: .8rem;
+    text-transform: uppercase; letter-spacing: .16em;
+    color: var(--tinta);
+    z-index: 2;
+  }
+  .navbar__botao-traco { position: relative; width: 22px; height: 9px; }
+  .navbar__botao-traco::before, .navbar__botao-traco::after {
+    content: ""; position: absolute; left: 0; width: 100%; height: 1px;
+    background: currentColor; transition: transform .35s var(--curva);
+  }
+  .navbar__botao-traco::before { top: 0; }
+  .navbar__botao-traco::after  { bottom: 0; }
+  .navbar__botao[aria-expanded="true"] { color: var(--papel); }
+  .navbar__botao[aria-expanded="true"] .navbar__botao-traco::before { transform: translateY(4px) rotate(45deg); }
+  .navbar__botao[aria-expanded="true"] .navbar__botao-traco::after  { transform: translateY(-4px) rotate(-45deg); }
+
+  .menu {
+    position: fixed; inset: 0;
+    background: var(--tinta);
+    flex-direction: column; align-items: flex-start; justify-content: center;
+    gap: 2.5rem;
+    padding: 2rem clamp(1.25rem, 8vw, 4rem);
+    opacity: 0; visibility: hidden; transform: translateY(-8px);
+    transition: opacity .4s var(--curva), transform .4s var(--curva), visibility .4s;
+  }
+  .menu--aberto { opacity: 1; visibility: visible; transform: none; }
+
+  /* O painel É a ressonância: corte sagital do pescoço, o território do
+     próprio médico, do crânio ao tórax. O azul entra por cima em blend
+     `color`, que toma a luminância da imagem e a cor da tinta — o resultado
+     é monocromático azul, sem lavar a anatomia. O brightness no filtro
+     existe só para o texto do menu manter contraste. */
+  .menu { isolation: isolate; }
+  .menu__rm {
+    display: block; position: absolute; inset: 0; z-index: 0;
+    width: 100%; height: 100%; object-fit: cover; object-position: 26% 50%;
+    filter: contrast(1.22) brightness(.52);
+    /* deixa o azul da seção subir nos pretos: o painel fica da família
+       da marca em vez de preto puro */
+    opacity: .8;
+    pointer-events: none;
+  }
+  .menu::before {
+    content: ""; position: absolute; inset: 0; z-index: 1;
+    background: var(--tinta);
+    mix-blend-mode: color;
+    pointer-events: none;
+  }
+  .menu__lista, .menu .botao { position: relative; z-index: 2; }
+
+  /* Depois do scroll a navbar fica clara e os links dela viram escuros.
+     O painel aberto é escuro, então aqui eles voltam a ser claros — e o
+     seletor precisa da mesma especificidade da regra que o escureceu. */
+  .navbar--assentada .menu__lista a { color: var(--papel); }
+  .navbar--assentada .menu .botao {
+    background: var(--papel); color: var(--tinta); border-color: var(--papel);
+  }
+  .menu__lista { flex-direction: column; align-items: flex-start; gap: 1.4rem; }
+  .menu__lista a {
+    color: var(--papel);
+    font-family: var(--display); font-size: 1.9rem;
+    text-transform: uppercase; letter-spacing: .07em;
+  }
+  .navbar--menu-aberto .navbar__logo { opacity: 0; pointer-events: none; }
+  .menu .botao { background: var(--papel); color: var(--tinta); border-color: var(--papel); }
+}
+
+@media (max-width: 560px) {
+  body { font-size: 1rem; }
+  .territorio { padding-left: 2.25rem; }
+  .regiao::before { left: -2.25rem; }
+  .territorio__extremo { margin-left: -2.25rem; }
+  /* sem espaço para a frase: fica só o ícone, como pastilha própria,
+     afastado da foto em vez de colado nela */
+  .flutuante { gap: .6rem; }
+  .flutuante__texto { display: none; }
+  .flutuante__balao { padding: .5rem; border-radius: 50%; }
+  .flutuante__selo { width: 30px; height: 30px; padding: 6px; }
+  .rodape__registros { line-height: 1.7; }
+}
+
+/* ────────────────────────────────────────  movimento off  ── */
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .js .entra, .js .revela { opacity: 1; transform: none; transition: none; }
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}

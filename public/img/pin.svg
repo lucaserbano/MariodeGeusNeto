@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Pin de mapa, modelado em volume: a forma é chapada, o que dá o 3D é o
+     gradiente diagonal, o brilho especular na calota e o fio de luz na borda
+     iluminada.
+
+     A luz vem do alto à DIREITA de propósito. Como marca d'água, o pin fica à
+     direita da seção e o texto passa à esquerda dele: com a luz vindo da
+     esquerda, a parte mais clara caía justamente atrás da coluna de Ponta
+     Grossa e derrubava três elementos abaixo de 4.5:1. Invertida, o lado
+     sombreado é o que encosta no texto e o brilho sangra na borda da tela.
+
+     E o que faz a peça ser legível em opacidade baixa é o contraste interno,
+     não a opacidade — por isso a rampa vai do branco ao aço médio. O furo é
+     vazado de verdade (fill-rule evenodd) para o fundo aparecer por ele. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 212" width="200" height="212">
+  <defs>
+    <linearGradient id="corpo" x1="88%" y1="6%" x2="16%" y2="92%">
+      <stop offset="0"   stop-color="#FFFFFF"/>
+      <stop offset=".32" stop-color="#DDE4E3"/>
+      <stop offset=".66" stop-color="#95A0AE"/>
+      <stop offset="1"   stop-color="#646C7C"/>
+    </linearGradient>
+    <linearGradient id="fio" x1="92%" y1="4%" x2="34%" y2="86%">
+      <stop offset="0"   stop-color="#FFFFFF" stop-opacity=".95"/>
+      <stop offset=".55" stop-color="#FFFFFF" stop-opacity=".16"/>
+      <stop offset="1"   stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="brilho" cx="66%" cy="26%" r="42%">
+      <stop offset="0"   stop-color="#FFFFFF" stop-opacity=".92"/>
+      <stop offset=".6"  stop-color="#FFFFFF" stop-opacity=".26"/>
+      <stop offset="1"   stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="suave" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+  </defs>
+
+  <!-- corpo + furo vazado -->
+  <path fill="url(#corpo)" fill-rule="evenodd"
+        d="M100 4c-38.7 0-70 31.3-70 70 0 52.5 70 134 70 134s70-81.5 70-134c0-38.7-31.3-70-70-70z
+           M100 106c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32z"/>
+
+  <!-- brilho especular na calota, do lado iluminado -->
+  <ellipse cx="128" cy="46" rx="30" ry="22" fill="url(#brilho)" filter="url(#suave)"/>
+
+  <!-- fio de luz na borda iluminada -->
+  <path fill="none" stroke="url(#fio)" stroke-width="4.5" stroke-linecap="round"
+        d="M100 8.5c36.2 0 65.5 29.3 65.5 65.5 0 20-10.2 44.6-22.5 66.5"/>
+
+  <!-- sombra própria dentro do furo, na borda de cima -->
+  <path fill="none" stroke="#5A6270" stroke-opacity=".55" stroke-width="5"
+        d="M78 56a30 30 0 0 1 48 6"/>
+</svg>
