@@ -83,6 +83,31 @@ else
   log "+ rm-pescoco.webp ($(du -h "$dst" | cut -f1 | tr -d ' '))"
 fi
 
+# A mesma ressonância, recortada do fundo preto. É a marca d'água da régua nas
+# especialidades: como já vem com alfa, entra direto, sem máscara nem mistura.
+# O cinza da RM é neutro e destoava da paleta, então aqui ela vira um duotone: a
+# luminância é remapeada para a rampa azul-ardósia -> branco, o que põe a --tinta
+# no lugar do preto. Fica gravado no arquivo em vez de aproximado por `filter` no
+# CSS, que não acerta um hex. Precisa de Pillow, como os brasões.
+dst="$OUT_IMG/rm-isolada.webp"
+if skip "$dst"; then
+  log "= rm-isolada.webp"
+else
+  tmp="$(mktemp -t rm).png"
+  python3 - "$SRC_FOTOS/MRI isolada.png" "$tmp" <<'TINTA'
+import sys
+from PIL import Image, ImageOps
+src = Image.open(sys.argv[1]).convert('RGBA')
+alfa = src.getchannel('A')
+img = ImageOps.colorize(src.convert('L'), black='#272D3B', white='#FFFFFF')
+img.putalpha(alfa)
+img.save(sys.argv[2])
+TINTA
+  cwebp -quiet -q 88 -alpha_q 100 "$tmp" -o "$dst"
+  rm -f "$tmp"
+  log "+ rm-isolada.webp ($(du -h "$dst" | cut -f1 | tr -d ' '))"
+fi
+
 # ------------------------------------------- logos das instituições ----
 # Entram como ícone circular de fundo branco ao lado de cada formação.
 # O círculo é feito em CSS; aqui só normalizamos tamanho e nome.

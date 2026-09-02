@@ -480,80 +480,104 @@ p { margin: 0; }
 }
 .titulos__texto > span { color: var(--tinta-suave); font-size: .95rem; line-height: 1.55; }
 
-/* Ressonância em marca d'água, encostada à direita e dissolvida pela
-   esquerda para não brigar com o texto. Mesma imagem do painel do menu. */
+/* Ressonância em marca d'água à direita da régua. O arquivo já vem recortado
+   do fundo, com alfa: entra direto, sem máscara nem filtro. */
 #especialidades { position: relative; overflow: hidden; }
-/* a marca d'água fica atrás; o conteúdo da régua sobe para o z-index 1 */
 .territorio > .regioes, .territorio > .territorio__extremo { position: relative; z-index: 1; }
 .especialidades__marca {
   position: absolute; z-index: 0; pointer-events: none; user-select: none;
-  /* Caixa fixa na metade direita + object-position para escolher o corte.
-     Antes a imagem inteira transbordava a seção e a máscara caía sobre o
-     dorso do paciente; com o recorte dá para pedir o perfil de frente. */
-  /* Vive dentro do .territorio: a altura dela é exatamente a da régua, de
-     "crânio" a "tórax". `right: calc(50% - 50vw)` a leva do envelope até a
-     borda direita da tela.
-     A frente do paciente (nariz, lábios, queixo) está nos primeiros ~25% da
-     ressonância; a coluna fica em 40-60% e o dorso depois. A janela de
-     `cover` cobre só esse trecho inicial. */
-  top: 0; bottom: 0; right: calc(50% - 50vw);
-  width: min(52vw, 760px); height: 100%;
-  object-fit: cover; object-position: 0% 50%;
-  /* O que faz a ressonância ser reconhecível é o contraste interno, não a
-     opacidade bruta: ela é uma imagem escura de estruturas claras sobre um
-     fundo claro. Estreitar demais a caixa cortava o perfil e virava borrão. */
-  opacity: .36;
-  filter: grayscale(1) contrast(1.8) brightness(1.08);
-  /* Radial: dissolve nas quatro direções. Uma máscara só horizontal deixava
-     as bordas de cima e de baixo retas, e a de cima virava uma linha na
-     emenda com a formação. */
-  /* Os raios têm de zerar DENTRO da caixa, senão a máscara ainda vale nas
-     bordas e a imagem termina numa linha reta. Com centro em 66% e raio X
-     de 58%, ela morre junto da borda esquerda; o raio Y de 50% faz o mesmo
-     em cima e embaixo. À direita ela extrapola de propósito, para a imagem
-     sangrar na borda da tela. */
-  -webkit-mask-image: radial-gradient(ellipse 56% 50% at 58% 50%,
-      #000 16%, rgb(0 0 0 / .78) 46%, rgb(0 0 0 / .34) 74%, transparent 100%);
-          mask-image: radial-gradient(ellipse 56% 50% at 58% 50%,
-      #000 16%, rgb(0 0 0 / .78) 46%, rgb(0 0 0 / .34) 74%, transparent 100%);
+  /* Dentro do .territorio: com top e bottom zerados ela tem exatamente a
+     altura da régua, de "crânio" a "tórax". O `left` começa depois da coluna
+     de texto (44% no máximo) e a largura, em `auto`, sangra à direita. */
+  top: 0; bottom: 0; left: 46%; right: auto;
+  height: 100%; width: auto; max-width: none;
+  /* Fade nas quatro bordas. O arquivo corta a anatomia reta em cima, embaixo e
+     à direita, e à esquerda ela chegaria na coluna de texto: sem isto, as
+     quatro arestas aparecem chapadas. Dois gradientes lineares cruzados,
+     combinados por `intersect`, apagam as quatro de uma vez — um só radial
+     comeria o perfil pelo meio. */
+  -webkit-mask-image:
+    linear-gradient(to right,  transparent 0, #000 17%, #000 80%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 14%, #000 86%, transparent 100%);
+  -webkit-mask-composite: source-in;
+          mask-image:
+    linear-gradient(to right,  transparent 0, #000 17%, #000 80%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 14%, #000 86%, transparent 100%);
+          mask-composite: intersect;
+  opacity: .9;
 }
-
 
 /* ───────────────────────────────────  território (a régua)  ── */
 /* O fio vertical é a frase do próprio médico: "praticamente todas as
    afecções entre o crânio e o tórax". As regiões descem o corpo. */
 
 .territorio { position: relative; margin-top: clamp(3.5rem, 6vw, 5.5rem); padding-left: 3.1rem; }
+/* O fio nasce e morre em transparente, para não bater de topo nos rótulos, e
+   ganha musgo no miolo: as pontas são território neutro (crânio, tórax) e o
+   meio é onde estão as regiões. É a mesma passagem de cor das bolinhas. */
 .territorio::before {
   content: ""; position: absolute; left: 4px; top: 1.55rem; bottom: 1.55rem;
   width: 1px;
   background: linear-gradient(to bottom,
-              transparent 0%, var(--pedra) 6%, var(--pedra) 94%, transparent 100%);
+              transparent 0%,
+              var(--pedra) 7%,
+              color-mix(in srgb, var(--musgo) 50%, var(--pedra)) 30%,
+              color-mix(in srgb, var(--musgo) 50%, var(--pedra)) 70%,
+              var(--pedra) 93%,
+              transparent 100%);
 }
 .territorio__extremo {
   font-size: .72rem; text-transform: uppercase; letter-spacing: .22em;
   color: var(--tinta-suave);
   margin-left: -3.1rem;
 }
-.territorio__extremo:last-child { margin-top: 1.2rem; }
-.territorio__extremo:first-child { margin-bottom: 1.2rem; }
+/* `of-type`, não `child`: o primeiro filho do .territorio é o <img> da
+   ressonância, então `:first-child` nunca casava e o "crânio" ficou sem margem
+   nenhuma. Os dois rótulos são os únicos <p> do bloco. */
+.territorio__extremo:first-of-type { margin-bottom: 2.2rem; }
+.territorio__extremo:last-of-type  { margin-top: 2.2rem; }
 
 .regioes { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(2.6rem, 4vw, 3.6rem); }
 
 .regiao { position: relative; }
+/* A bolinha marca a região no fio. O `margin-left` centra o disco no fio, que
+   tem 1px e mora em `left: 4px` do .territorio: metade do diâmetro para a
+   esquerda de 4,5px. Se mudar o diâmetro, refaça essa conta. */
 .regiao::before {
-  content: ""; position: absolute; left: -3.1rem; top: .52em;
-  margin-left: 1px; width: 7px; height: 7px; border-radius: 50%;
+  content: ""; position: absolute; left: -3.1rem; top: .46em;
+  margin-left: -1px; width: 11px; height: 11px; border-radius: 50%;
   background: var(--musgo);
-  box-shadow: 0 0 0 6px var(--papel);
+  /* Núcleo verde, folga de papel que abre o fio, e um anel fino do mesmo verde
+     por fora: o nó vira um alvo, não um ponto solto — e conversa com os
+     círculos que já existem na página (avatar, brasões). */
+  box-shadow:
+    0 0 0 6px var(--papel),
+    0 0 0 7px color-mix(in srgb, var(--musgo) 34%, transparent);
 }
+
+/* Título grifado: azul-ardósia por baixo, papel por cima. O fundo vive num
+   <span> em linha, não no <h3>, senão ele tomaria a largura da coluna toda em
+   vez de abraçar as palavras. `box-decoration-break: clone` reconstrói o
+   grifo em cada linha quando o título quebra no mobile. */
+/* 1.32 em vez do 1.16 dos outros títulos: com o grifo, a entrelinha fechada
+   fazia as duas faixas se encostarem quando o título quebra em telas estreitas.
+   O suficiente para virar um degrau limpo, não uma mancha só. */
+.regiao h3 { line-height: 1.32; }
+.regiao .grifo {
+  background: var(--tinta);
+  color: var(--papel);
+  padding: .08em .34em .16em;
+  border-radius: 3px;
+  -webkit-box-decoration-break: clone;
+          box-decoration-break: clone;
+}
+/* Uma coluna só, à esquerda: a metade direita da régua é da ressonância.
+   A largura máxima está no bloco `min-width: 1001px` do responsivo. */
 .regiao ul {
   list-style: none; margin: 1.05rem 0 0; padding: 0;
-  columns: 2; column-gap: 2.75rem;
   color: var(--tinta-suave);
 }
 .regiao ul li {
-  break-inside: avoid;
   padding-left: 1.05rem; position: relative;
   margin-bottom: .5rem; font-size: .98rem; line-height: 1.6;
 }
@@ -567,20 +591,39 @@ p { margin: 0; }
 .oncologia {
   margin-top: clamp(3.5rem, 6vw, 5rem);
   padding: clamp(2rem, 4vw, 3.1rem);
-  /* verde com transparência: o papel da seção sobe por baixo e tira o
-     aspecto de bloco chapado */
-  background: color-mix(in srgb, var(--musgo) 95%, transparent);
+  /* Verde opaco. Antes eram 95% com transparência, para o papel subir por
+     baixo e tirar o aspecto chapado — papel que a elevação abaixo agora faz
+     melhor. E o verde translúcido clareava: o par com --musgo-suave ficava em
+     4.77:1, sem folga para a marca d'água no canto, que clareia mais um pouco
+     e derrubava a última linha da lista para 4.27:1. Opaco, a mesma linha dá
+     4.9:1. */
+  background: var(--musgo);
   color: var(--papel);
   border-radius: 4px;
   position: relative; overflow: hidden;
+  /* Elevação: três sombras em profundidades diferentes mais um fio claro na
+     aresta de cima, a face que pegaria a luz. Em azul-ardósia, porque sombra
+     cinza sobre o papel esverdeado suja a paleta. */
+  box-shadow:
+    0 2px 4px    rgb(39 45 59 / .07),
+    0 12px 26px -10px rgb(39 45 59 / .20),
+    0 32px 60px -26px rgb(39 45 59 / .26),
+    inset 0 1px 0 color-mix(in srgb, var(--papel) 16%, transparent);
 }
-/* O símbolo assina o bloco pelo canto, na versão estática — a animada já
-   aparece duas vezes na página. Sangra pela borda de propósito. */
+/* O símbolo assina o bloco pelo canto inferior direito, na versão estática —
+   a animada já aparece duas vezes na página. */
 .oncologia__marca {
   position: absolute; z-index: 0; pointer-events: none; user-select: none;
-  right: 3.5%; bottom: 6%;
-  width: clamp(160px, 26%, 320px); height: auto;
-  opacity: .085;
+  /* O PNG tem 12,33% de margem transparente na lateral e 16,46% embaixo
+     (600x553, tinta em 74/91px). Sem descontá-la, `20px` viram ~58px à direita
+     e ~67px embaixo. As duas frações são da LARGURA: a altura é 553/600 dela. */
+  --marca-l: clamp(160px, 26%, 320px);
+  width: var(--marca-l); height: auto;
+  right:  calc(20px - var(--marca-l) * .1233);
+  bottom: calc(20px - var(--marca-l) * .1517);
+  /* .065, não os .085 das outras marcas d'água: no canto ela cruza a última
+     linha da lista e clareia o verde. A .085 esse texto cai para 4.40:1. */
+  opacity: .065;
 }
 .oncologia > *:not(.oncologia__marca) { position: relative; z-index: 1; }
 .oncologia h3 { color: var(--papel); }
@@ -804,10 +847,38 @@ p { margin: 0; }
 }
 .js .entra--dentro, .js .revela--visivel { opacity: 1; transform: none; }
 
+/* Cada região entra por conta própria conforme o scroll, e por partes:
+   primeiro a bolinha, que cresce no fio, depois o título, depois a lista.
+   O contêiner não anima — se ele também fizesse fade, as opacidades se
+   multiplicariam e os dois deslocamentos somariam. Daí ele ser neutralizado
+   aqui, com especificidade acima da regra genérica de `.revela`. */
+.js .regiao.revela { opacity: 1; transform: none; transition: none; }
+
+.js .regiao::before,
+.js .regiao > h3,
+.js .regiao > ul {
+  opacity: 0;
+  transition: opacity 1.6s var(--curva-lenta), transform 1.6s var(--curva-lenta);
+}
+.js .regiao::before { transform: scale(.2); }
+.js .regiao > h3 { transform: translateY(22px); transition-delay: .22s; }
+.js .regiao > ul { transform: translateY(22px); transition-delay: .44s; }
+
+.js .regiao.revela--visivel::before,
+.js .regiao.revela--visivel > h3,
+.js .regiao.revela--visivel > ul { opacity: 1; transform: none; }
+
 /* ───────────────────────────────────────────  responsivo  ── */
 
+/* No desktop a lista das regiões ocupa só a metade esquerda: o resto da
+   faixa é da ressonância. O `min()` mantém a folga também em telas de
+   ~1100px, onde 30rem já encostaria na imagem. */
+@media (min-width: 1001px) {
+  .regiao ul { max-width: min(30rem, 44%); }
+}
+
 @media (max-width: 1000px) {
-  .regiao ul, .oncologia ul { columns: 1; }
+  .oncologia ul { columns: 1; }
 }
 
 /* Numa coluna estreita o rótulo disputa largura com o nome do hospital e
@@ -900,7 +971,25 @@ p { margin: 0; }
     -webkit-mask-image: radial-gradient(ellipse at center, #000 38%, transparent 82%);
             mask-image: radial-gradient(ellipse at center, #000 38%, transparent 82%);
   }
-  .especialidades__marca { width: 72vw; opacity: .15; object-position: 10% 50%; }
+  /* Mesmo tratamento do painel do menu: a imagem toma a largura da tela e é
+     recortada por `cover`, no mesmo enquadramento (`object-position: 26%`),
+     em vez de flutuar como figura solta. A altura continua sendo a da régua,
+     de "crânio" a "tórax". Aqui ela fica sobre papel claro e por baixo do
+     texto, então no lugar do `brightness(.52)` do menu quem segura a
+     legibilidade é a opacidade. O fade das quatro bordas vem da regra base. */
+  .especialidades__marca {
+    top: 0; bottom: 0; left: auto; right: calc(50% - 50vw);
+    transform: none;
+    height: 100%; width: 100vw;
+    object-fit: cover; object-position: 26% 50%;
+    filter: contrast(1.22);
+    /* Aqui o texto passa POR CIMA da imagem em toda a largura, coisa que não
+       acontece no menu (lá o painel só tem os links) nem no desktop (lá a lista
+       fica na metade esquerda, fora dela). O teto que mantinha 4.5:1 era .11;
+       a .22 a lista fica em ~3.5:1 sobre a massa escura do crânio. Valor
+       escolhido a olho, a pedido. */
+    opacity: .22;
+  }
 
   /* Numa coluna alta e estreita, 92% da altura faz o pin cobrir o texto todo
      e virar um borrão sem forma. Aqui ele é dimensionado pela largura e vai
@@ -1002,6 +1091,9 @@ p { margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .js .entra, .js .revela { opacity: 1; transform: none; transition: none; }
+  .js .regiao::before, .js .regiao > h3, .js .regiao > ul {
+    opacity: 1; transform: none; transition: none;
+  }
   *, *::before, *::after {
     animation-duration: .001ms !important;
     animation-iteration-count: 1 !important;

@@ -89,6 +89,35 @@ médico ("praticamente todas as afecções entre o crânio e o tórax") desenhad
 Por isso a lista é `<ol>` e **não leva numeração visível** — a ordem é anatômica,
 não uma sequência de passos. Não troque por cards nem por números.
 
+No desktop a lista de cada região fica numa **coluna só, à esquerda**
+(`max-width: min(30rem, 44%)`, no bloco `min-width: 1001px`). A segunda coluna caía
+justamente sobre a ressonância e obrigava a mantê-la quase apagada; sem ela, a
+metade direita da régua é inteira da imagem.
+
+**Os nomes das regiões são grifados**: fundo `--tinta`, texto `--papel`, num
+`<span class="grifo">` dentro do `<h3>` — em linha, para o fundo abraçar as
+palavras em vez de tomar a coluna toda. `box-decoration-break: clone` reconstrói o
+grifo em cada linha quando o título quebra, e a entrelinha do `h3` sobe para 1.32
+(contra os 1.16 dos outros títulos) para as duas faixas não se encostarem.
+
+**A bolinha é um alvo, não um ponto**: núcleo de 11px em `--musgo`, 6px de papel
+que abre o fio e um anel de 1px do mesmo verde a 34%. O `margin-left: -1px` centra
+o disco no fio, que tem 1px e mora em `left: 4px` do `.territorio` — **se mudar o
+diâmetro, refaça essa conta** (metade do diâmetro à esquerda de 4,5px).
+
+**Cada região entra sozinha no scroll, e por partes**: bolinha (cresce de
+`scale(.2)`), depois o título (+0,22s), depois a lista (+0,44s). Quem leva a classe
+`revela` é cada `<li class="regiao">`; o contêiner é neutralizado
+(`.js .regiao.revela { opacity: 1; transform: none; transition: none }`) porque, se
+ele também animasse, as opacidades se multiplicariam e os dois deslocamentos
+somariam. O bloco de `prefers-reduced-motion` precisa alcançar as três partes —
+a regra genérica de `.revela` não basta.
+
+**`.territorio__extremo` usa `:first-of-type` / `:last-of-type`, não `:first-child`.**
+O primeiro filho do `.territorio` é o `<img>` da ressonância, então o `:first-child`
+nunca casava e o "crânio" ficou tempos sem margem inferior, encostado no primeiro
+título.
+
 A oncologia fica **fora** da régua, num bloco próprio: ela atravessa todas as
 regiões em vez de ocupar uma.
 
@@ -146,30 +175,48 @@ Três, todas decorativas (`alt=""`, `aria-hidden`), todas por baixo do texto:
 | Onde | Imagem | Tratamento |
 |---|---|---|
 | Hero | o **símbolo animado**, em claro (`color: var(--papel)`) | altura total da seção, à direita; máscara linear faz a opacidade cair da direita para a esquerda, acompanhando o gradiente azul. No mobile: centralizado, com máscara radial. `logo/simbolo-branco.png` não é mais usado no site |
-| Especialidades | `rm-pescoco.webp` | vive **dentro do `.territorio`**: a altura é exatamente a da régua, de "crânio" a "tórax". `right: calc(50% - 50vw)` a leva do envelope até a borda da tela |
+| Especialidades | `rm-isolada.webp` | vive **dentro do `.territorio`**: a altura é exatamente a da régua, de "crânio" a "tórax". No desktop começa em `left: 46%`, depois da coluna de texto, e sangra pela direita; no mobile toma a largura da tela em `cover`, como o painel do menu |
 | Menu mobile | `rm-pescoco.webp` | o painel inteiro, com o azul em `mix-blend-mode: color` |
 | Contato | o próprio símbolo animado | centralizado atrás do texto, `opacity: .085` |
 
-**A máscara da ressonância precisa ser radial e zerar dentro da caixa.** Com máscara
-só horizontal, as bordas de cima e de baixo ficavam retas e a de cima virava uma
-linha na emenda com a formação. E se os raios da elipse extrapolarem a caixa, a
-máscara ainda vale nas bordas e a imagem termina numa linha reta — por isso
-`ellipse 58% 50% at 66% 50%`: à esquerda, em cima e embaixo ela morre junto da
-borda; à direita extrapola de propósito, para sangrar na borda da tela.
+**A ressonância é um duotone gravado no arquivo, não um `filter`.** O `build-assets.sh`
+remapeia a luminância para a rampa `#272D3B` → branco com `ImageOps.colorize`, o que
+põe a `--tinta` no lugar do preto e tira o cinza neutro da paleta. Aproximar isso com
+`filter` no CSS (`sepia` + `hue-rotate`) não acerta um hex. Esse passo precisa de
+**Pillow**, como os brasões.
 
-**Enquadrar a ressonância tem duas variáveis independentes, e é fácil culpar a
-errada.** O recorte (`object-position` + a proporção da caixa) escolhe *qual trecho*
-da imagem entra; a máscara escolhe *qual trecho do recorte* ganha peso. A frente do
-paciente (nariz, lábios, queixo) está nos primeiros ~25% da imagem, a coluna em
-40-60% e o dorso depois. Já aconteceu de o recorte estar certo e a máscara, centrada
-em 72% da caixa, mostrar só a coluna. E estreitar demais a caixa corta o perfil e
-transforma tudo num borrão: o que faz a imagem ser reconhecível é o contraste
-interno (`contrast(1.8)`), não a opacidade bruta.
+Opacidade: **`.9` no desktop**, **`.22` no mobile**. A do mobile está acima do que o
+contraste aguenta — o teto para 4.5:1 ali era `.11`, porque a lista passa por cima da
+imagem em toda a largura; a `.22` esse texto fica em ~3.5:1. É uma escolha do dono do
+projeto, não um descuido.
 
-**Fundo translúcido também muda o contraste.** O bloco de oncologia é
-`color-mix(var(--musgo) 95%, transparent)`: a transparência clareia o verde e, a
-88%, derrubou o texto de dentro para 3.5:1. O par que passa é 95% de verde com
-`--musgo-suave` `#DDE3D9`. Mexer num dos dois exige remedir.
+**A ressonância da régua usa `rm-isolada.webp`, já recortada do fundo preto.**
+Antes era a mesma `rm-pescoco.webp` do menu, com fundo chapado: numa seção clara as
+estruturas (que são claras) sumiam e o preto ao redor virava uma mancha cinza — era
+a mancha, não a anatomia, o que se via. Com alfa, a imagem entra direto: sem
+máscara radial, sem `invert`, sem `mix-blend-mode`. **Não volte a apontar essa marca
+d'água para `rm-pescoco.webp`** — o menu continua usando essa, porque lá o painel é
+escuro e o fundo preto é justamente o que se quer.
+
+**O fade das bordas são dois gradientes lineares cruzados, não um radial.** O
+arquivo corta a anatomia reta em cima, embaixo e à direita, e à esquerda ela
+chegaria na coluna de texto: são quatro arestas para apagar. Um `radial-gradient`
+que desse conta das quatro comeria o perfil pelo meio. Dois `linear-gradient`
+(um horizontal, um vertical) combinados com `mask-composite: intersect` apagam as
+quatro bordas sem tocar no centro.
+
+**O bloco de oncologia é verde opaco.** Já foi `color-mix(var(--musgo) 95%,
+transparent)`, para o papel subir por baixo e tirar o aspecto chapado — papel que a
+elevação (`box-shadow` em três profundidades mais o fio claro na aresta de cima)
+agora faz melhor. O verde translúcido clareava: o par com `--musgo-suave` `#DDE3D9`
+ficava em 4.77:1, sem folga nenhuma para a marca d'água do canto. Opaco, a mesma
+linha dá 4.9:1. Mexer no verde ou no `--musgo-suave` exige remedir.
+
+**A marca do canto da oncologia é `.065`, não os `.085` das outras.** Ancorada a
+20px do canto inferior direito, ela cruza a última linha da lista e clareia o
+verde; a `.085` esse texto cai para 4.40:1. Os 20px são de tinta, não de caixa: o
+PNG tem 12,33% de margem transparente na lateral e 16,46% embaixo, descontados no
+`right`/`bottom`.
 
 **Marca d'água atrás de texto muda o contraste, sempre.** Duas vezes isso derrubou
 texto abaixo de 4.5:1 e as duas correções estão nos tokens: o texto secundário da
@@ -263,8 +310,10 @@ Nunca prometa resultado de tratamento nem cura.
     (`.local__marca--sangra`, sem padding) e a própria cor da marca vira o disco.
   Esse passo precisa de **Pillow** (`pip3 install Pillow`) — é a única parte do
   pipeline que não roda só com as ferramentas do sistema.
-- `public/img/rm-pescoco.webp` — corte sagital de ressonância do pescoço. É a marca
-  d'água do painel do menu mobile, cobrindo a altura toda: o território do próprio
+- `public/img/rm-isolada.webp` — a mesma ressonância, já recortada do fundo preto
+  (com alfa). É a marca d'água da régua nas especialidades.
+- `public/img/rm-pescoco.webp` — corte sagital de ressonância do pescoço, com o fundo
+  preto original. É a marca d'água do painel do menu mobile, cobrindo a altura toda: o território do próprio
   médico, do crânio ao tórax. O painel **é** a imagem; o azul entra por cima num
   `::before` com `mix-blend-mode: color`, que toma a luminância da ressonância e a
   cor da tinta. O `brightness` no filtro e o `opacity: .8` existem só para o texto
