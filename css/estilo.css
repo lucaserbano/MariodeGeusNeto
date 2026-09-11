@@ -61,13 +61,28 @@ body {
 img, svg, picture { display: block; max-width: 100%; }
 img { height: auto; }
 
+/* O anel de foco tem de contrastar com o fundo em que cai, e o --musgo só
+   contrasta com o claro: sobre --tinta ele dava 1.59:1, sobre o topo do
+   gradiente de #locais 1.30:1 e sobre o próprio verde 1.00:1. WCAG 1.4.11
+   pede 3:1, então a navegação por teclado não tinha indicador visível em
+   nenhuma seção escura — justamente onde ficam os quatro links de endereço.
+   Agora a cor é um token que cada superfície redefine. Medidos: --musgo sobre
+   --papel 7.1:1; --papel sobre --tinta 11.3:1, sobre #343B49 9.4:1, sobre
+   --musgo 7.1:1. Superfície escura nova precisa redefinir --foco. */
+:root { --foco: var(--musgo); }
+.hero, .secao--tinta, .rodape, .oncologia, .navbar { --foco: var(--papel); }
+/* a barra assentada é clara, e no mobile ela é sempre clara */
+.navbar--assentada { --foco: var(--musgo); }
+
 :focus-visible {
-  outline: 2px solid var(--musgo);
+  outline: 2px solid var(--foco);
   outline-offset: 3px;
   border-radius: 2px;
 }
 
 .pular {
+  /* o anel cai fora da pílula, sobre a hero escura */
+  --foco: var(--papel);
   position: absolute; top: -100px; left: 1rem; z-index: 200;
   background: var(--tinta); color: var(--papel);
   padding: .7rem 1.1rem; text-decoration: none; border-radius: 3px;
@@ -149,7 +164,10 @@ p { margin: 0; }
   color: var(--tinta-suave);
   margin-top: 1.6rem;
 }
-.registros span { color: var(--pedra); margin: 0 .15rem; }
+/* O separador herda a cor do texto. Em --pedra ele dava 3.02:1 no claro e
+   3.73:1 no escuro, contra a regra do próprio projeto de não devolver o
+   #88857C para texto pequeno. Um "·" lê como separador pela forma. */
+.registros span { margin: 0 .15rem; }
 
 /* ─────────────────────────────────────────────  estrutura  ── */
 
@@ -191,13 +209,19 @@ p { margin: 0; }
 }
 .botao--contorno:hover { background: var(--tinta); color: var(--papel); }
 
-/* O verde é cor de adorno na paleta, mas aqui ele é o secundário da hero:
-   sobre o azul escuro ele se distingue do CTA claro sem competir com ele. */
+/* O verde é cor de adorno na paleta, mas aqui ele é o secundário: sobre o
+   azul escuro da hero ele se distingue do CTA claro sem competir com ele, e
+   em #contato faz o mesmo papel ao lado do WhatsApp. */
 .botao--verde {
   background: var(--musgo); color: var(--papel); border-color: var(--musgo);
 }
+/* Ao esvaziar, o botão tem de vestir o PRÓPRIO verde, não o papel. Esta é a
+   regra que vale em seção clara (#contato): com `--papel` no texto e na
+   borda, o botão sumia contra o fundo `--papel` no hover — invisível, não
+   discreto. Verde sobre `--papel` dá 7.2:1. A hero, que é escura, sobrescreve
+   isto logo abaixo. */
 .botao--verde:hover {
-  background: transparent; color: var(--papel); border-color: var(--papel);
+  background: transparent; color: var(--musgo); border-color: var(--musgo);
 }
 .botao__selo { width: 1.15em; height: 1.15em; flex: 0 0 auto; }
 .botao--grande   { padding: 1.15rem 2.4rem; font-size: 1rem; }
@@ -207,17 +231,6 @@ p { margin: 0; }
 }
 .secao--tinta .botao:hover { background: transparent; color: var(--papel); }
 
-.elo {
-  color: inherit; text-decoration: none;
-  font-size: .95rem;
-  padding-bottom: .2rem;
-  background-image: linear-gradient(currentColor, currentColor);
-  background-size: 0% 1px;
-  background-repeat: no-repeat;
-  background-position: 0 100%;
-  transition: background-size .4s var(--curva);
-}
-.elo:hover { background-size: 100% 1px; }
 
 /* ────────────────────────────────────────────────  navbar  ── */
 
@@ -343,15 +356,24 @@ p { margin: 0; }
   letter-spacing: .005em;
   line-height: 1.16;
 }
+/* SemiBold, o mesmo peso de "Clareza"/"Precisão" na hero — não o Light 300
+   dos rótulos. Em corpo grande o 300 da Cormorant afina demais e o título
+   perdia a voz para a lista embaixo. O SemiBold é só 1–4% mais largo que o
+   Light (medido nas sete linhas de título), então nenhuma quebra muda. */
 .formacao h2, #especialidades h2, #locais h2, #contato h2 {
   font-size: clamp(2.1rem, 3.4vw, 3.05rem);
+  font-weight: 600;
 }
-/* mesmo destaque por peso da hero: as duas palavras que contam a escala */
-#locais h2 em { font-style: normal; font-weight: 600; }
+/* O <em> de #locais ("Duas"/"quatro") continua no HTML, mas agora não pesa
+   mais que a frase: com o título inteiro em 600 não há degrau. Só falta
+   neutralizar o itálico. Se o destaque tiver de voltar, o caminho é baixar o
+   resto da frase, não subir estas duas palavras — 700 ao lado de 600 mal se
+   distingue na Cormorant. */
+#locais h2 em { font-style: normal; }
 #especialidades h3 { font-size: clamp(1.35rem, 2vw, 1.7rem); letter-spacing: .01em; }
 .hero__chamada { margin-top: 1.9rem; max-width: 40ch; color: var(--papel-hero); }
 .hero .registros { color: var(--papel-hero); }
-.hero .registros span { color: var(--pedra); }
+
 
 .hero__acoes {
   margin-top: 2.6rem;
@@ -626,16 +648,88 @@ p { margin: 0; }
   opacity: .065;
 }
 .oncologia > *:not(.oncologia__marca) { position: relative; z-index: 1; }
-.oncologia h3 { color: var(--papel); }
-.oncologia p { margin-top: 1.1rem; max-width: 58ch; color: var(--musgo-suave); }
+/* SemiBold como os títulos de seção. Os nomes das regiões, que são os outros
+   h3 daqui, seguem em Light 300 de propósito: lá o destaque já vem do grifo
+   (fundo --tinta), e somar peso ao grifo engrossaria a faixa. Aqui não há
+   grifo, então quem destaca é o peso. Cabe numa linha até ~366px de tela —
+   o mesmo limite do Light, que só ganha 3,5px de folga. */
+/* Grifo invertido: nas regiões o fundo é claro e a caixinha é de tinta; aqui o
+   fundo é o verde, então a caixinha é de papel e a palavra fica verde. --musgo
+   sobre --papel dá 7.1:1. A entrelinha sobe para 1.32, como lá, para as faixas
+   não se encostarem quando o título quebra em duas linhas no mobile. */
+.oncologia h3 { font-weight: 600; line-height: 1.32; }
+/* Grifo invertido: nas regiões o fundo é claro e a caixinha é de tinta; aqui o
+   fundo é o verde, então a caixinha é de papel e a palavra fica verde. --musgo
+   sobre --papel dá 7.1:1. A entrelinha sobe para 1.32, como lá, para as faixas
+   não se encostarem quando o título quebra em duas linhas no mobile. */
+.oncologia .grifo {
+  background: var(--papel);
+  color: var(--musgo);
+  padding: .08em .34em .16em;
+  border-radius: 3px;
+  -webkit-box-decoration-break: clone;
+          box-decoration-break: clone;
+}
+
+/* Duas colunas. A caixa tem ~1100px no desktop e uma coluna só de 58ch deixava
+   a metade direita vazia. `auto-fit` resolve sem breakpoint: abaixo de ~2x28rem
+   vira uma coluna só. Cada coluna fica em ~45ch, dentro do teto de 65–75ch. */
+.oncologia__texto {
+  margin-top: 1.75rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(28rem, 100%), 1fr));
+  gap: 1.15rem 3rem;
+}
+.oncologia__texto p { margin: 0; color: var(--musgo-suave); }
+/* o acolhimento em papel cheio: é a resposta à pergunta que a pessoa assustada
+   está de fato fazendo, e precisa pesar mais que o parágrafo ao lado. 7.1:1 */
+.oncologia__acolhe { color: var(--papel); }
+
+/* A lista é só agrupamento e ritmo: sem fundo, sem fio, sem sangria. Tentei
+   destacá-la com uma faixa mais escura e o dono do projeto vetou — a caixa
+   verde é uma superfície só, e alternar tom dentro dela suja o bloco. Quem
+   separa a lista do texto acima é a folga, e quem a introduz é a frase. */
+.oncologia__faixa { margin-top: 2.6rem; }
+/* A lista não começa do nada. Peso 600 e corpo acima do dos itens: é uma
+   entrada, não mais uma linha da lista. --papel sobre --musgo dá 7.1:1. */
+.oncologia__intro {
+  margin: 0 0 1.5rem;
+  color: var(--papel);
+  font-size: 1.08rem;
+  font-weight: 600;
+}
 .oncologia ul {
-  list-style: none; margin: 1.75rem 0 0; padding: 0;
-  columns: 2; column-gap: 2.75rem; color: var(--musgo-suave);
+  list-style: none; margin: 0; padding: 0;
+  columns: 2; column-gap: 3rem; color: var(--musgo-suave);
 }
 .oncologia ul li {
   break-inside: avoid; padding-left: 1.05rem; position: relative;
-  margin-bottom: .5rem; font-size: .98rem; line-height: 1.6;
+  margin-bottom: .55rem; font-size: .98rem; line-height: 1.6;
 }
+
+/* O convite fecha a caixa, centralizado e em coluna. Antes ele era uma linha
+   com `space-between`, e o botão na borda direita caía em cima da marca d'água
+   do canto. Centralizado, o botão fica na faixa vazia do meio e a marca
+   continua onde sempre esteve. O rótulo e o href são os canônicos de propósito:
+   o CLAUDE.md manda usar o mesmo link em todo CTA. */
+.oncologia__convite {
+  margin-top: 2.8rem;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 1.35rem; text-align: center;
+}
+.oncologia__convite p {
+  margin: 0; max-width: 48ch;
+  color: var(--papel);
+}
+/* Invertido em relação ao resto da página: aqui o fundo é o verde, então o
+   botão cheio é de papel. 7.1:1 nos dois estados. */
+.oncologia .botao {
+  background: var(--papel); color: var(--musgo); border-color: var(--papel);
+}
+.oncologia .botao:hover {
+  background: transparent; color: var(--papel); border-color: var(--papel);
+}
+
 .oncologia ul li::before {
   content: ""; position: absolute; left: 0; top: .72em;
   width: 5px; height: 1px; background: color-mix(in srgb, var(--papel) 55%, transparent);
@@ -697,11 +791,14 @@ p { margin: 0; }
   padding: 1.15rem .75rem 1.15rem 0;
   color: inherit; text-decoration: none;
   border-radius: 4px;
-  transition: background .35s var(--curva), padding-left .35s var(--curva);
+  /* `transform`, não `padding-left`: animar padding é reflow a cada hover, e
+     com o anel de foco antes invisível o deslocamento virava o único aviso de
+     foco — exatamente o que WCAG 3.2 pede para evitar. */
+  transition: background .35s var(--curva), transform .35s var(--curva);
 }
 .local:hover, .local:focus-visible {
   background: color-mix(in srgb, var(--papel) 7%, transparent);
-  padding-left: .75rem;
+  transform: translateX(.75rem);
 }
 
 /* Mesmo disco dos brasões da formação. Duas famílias de original:
@@ -775,7 +872,14 @@ p { margin: 0; }
   display: flex; align-items: center; justify-content: center;
   gap: 1.25rem; flex-wrap: wrap;
 }
-.contato__acoes .botao { min-width: 16.5rem; }
+.contato__acoes .botao { min-width: min(16.5rem, 100%); }
+
+/* Terceiro botão, em linha própria abaixo dos dois preenchidos. Em contorno
+   e em corpo normal (não `--grande`): terciário na hierarquia, sem perder o
+   alvo de toque. O WhatsApp continua sendo o CTA; o telefone existe porque o
+   público é adulto e idoso e nem todo mundo escreve. --tinta sobre --papel
+   dá 11.3:1. */
+.contato__ligar { margin-top: 1.1rem; display: flex; justify-content: center; }
 
 /* ────────────────────────────────────────────────  rodapé  ── */
 
@@ -795,7 +899,7 @@ p { margin: 0; }
   font-size: .74rem; letter-spacing: .16em; text-transform: uppercase;
   color: var(--papel-suave);
 }
-.rodape__registros span { color: var(--pedra); }
+
 
 /* ────────────────────────────────────  whatsapp flutuante  ── */
 
@@ -933,15 +1037,15 @@ p { margin: 0; }
      dissolução caía fora da imagem — a foto cortava numa linha dura. */
   .hero__retrato { position: relative; min-height: 0; height: auto; padding-top: var(--nav); }
   .hero__retrato picture { height: auto; }
-  /* A massa escura do médico ocupa 18–55% da largura da foto, centrada em
-     36%: fora do meio. Com a caixa em 3/2 — a proporção exata da imagem — não
-     havia corte lateral e o `object-position` não fazia nada. A caixa quadrada
-     corta as laterais (1,5x de aproximação) e aí o enquadramento passa a
-     valer. O 19% sai da conta: com `cover`, um ponto na fração f da imagem
-     cai em 1,5f − 0,5p da caixa, e centrar a cabeça (f = 0,396, medida na
-     imagem) pede p = 3f − 1. Se mudar a foto ou a proporção da caixa, refaça
-     a conta — chutar aqui é o que deixa ele fora do meio. */
-  .hero__retrato img { aspect-ratio: 1 / 1; height: auto; object-position: 19% 50%; }
+  /* A caixa é quadrada: corta as laterais da foto (1,5x de aproximação) e
+     assim a cabeça, que na imagem 3:2 está em 39,6% da largura, cai no meio.
+     Esse enquadramento antes era feito aqui por `object-position: 19% 50%`
+     (de p = 3f − 1) sobre a foto 3:2 inteira — o que jogava fora um terço
+     dos pixels do arquivo e deixava a foto visivelmente mole no retina.
+     Agora quem entrega o recorte é o build (`hero-mobile-*.webp`, já
+     quadrada), então o `cover` não corta mais nada e o centro serve.
+     Se mexer no enquadramento, mexa no `crop` do build-assets.sh. */
+  .hero__retrato img { aspect-ratio: 1 / 1; height: auto; object-position: 50% 50%; }
   .hero__retrato::after {
     background: linear-gradient(to bottom,
       rgb(39 45 59 / .16)  0%, rgb(39 45 59 / .04) 10%, rgb(39 45 59 / 0) 22%,
@@ -1022,6 +1126,9 @@ p { margin: 0; }
   .navbar__botao[aria-expanded="true"] .navbar__botao-traco::after  { transform: translateY(-4px) rotate(-45deg); }
 
   .menu {
+    /* o painel é escuro dentro de uma navbar que no mobile é sempre clara:
+       sem isto os seis alvos daqui herdariam o anel --musgo, em 1.59:1 */
+    --foco: var(--papel);
     position: fixed; inset: 0;
     background: var(--tinta);
     flex-direction: column; align-items: flex-start; justify-content: center;
@@ -1098,5 +1205,28 @@ p { margin: 0; }
     animation-duration: .001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: .001ms !important;
+    /* sem zerar o delay, `.regiao > ul` (.44s) e os delays inline do JS ainda
+       deixavam o elemento invisível por meio segundo antes de surgir de uma vez */
+    transition-delay: 0s !important;
+    animation-delay: 0s !important;
   }
+}
+
+/* ─────────────────────────────────────────────  impressão  ── */
+
+/* Sem isto, imprimir a página sai em branco: tudo que ainda não foi rolado
+   continua em `opacity: 0`, porque o observador só revela o que entrou na
+   tela. Paciente que imprime o endereço para levar não pode receber papel
+   vazio. */
+@media print {
+  .js .entra, .js .revela,
+  .js .regiao::before, .js .regiao > h3, .js .regiao > ul {
+    opacity: 1 !important; transform: none !important; transition: none !important;
+  }
+  .flutuante, .navbar, .pular, body::after,
+  .hero__marca, .contato__monograma, .especialidades__marca,
+  .locais__marca, .oncologia__marca, .menu__rm { display: none !important; }
+  .hero, .secao, .rodape { padding-block: 1.5rem; }
+  /* o URL de cada link, para o papel não perder o destino */
+  .local::after { content: " (" attr(href) ")"; font-size: .7rem; word-break: break-all; }
 }

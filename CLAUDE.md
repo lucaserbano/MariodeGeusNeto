@@ -54,21 +54,43 @@ especialidades são as duas únicas claras seguidas — por isso a folga entre e
 
 **Caixa mista** (`text-transform: none`, entrelinha 1.16, quase sem espacejamento)
 vale para **todos os títulos de seção** — hero, formação, especialidades (incluindo
-os nomes das regiões anatômicas), locais e contato. Dois títulos destacam palavras por peso, em Cormorant SemiBold (600) dentro de
-`<em>` com `font-style: normal` — é para isso que existem os pesos 500/600 da
-Cormorant: "Clareza"/"Precisão" na hero e "Duas"/"quatro" em locais. O destaque
-marca sempre o par de palavras que carrega o sentido da frase, nunca uma palavra
-solta.
+os nomes das regiões anatômicas), locais e contato.
+
+**E caixa mista em SemiBold (600).** Os quatro `<h2>` de seção — formação,
+especialidades, locais e contato — têm o mesmo peso de "Clareza"/"Precisão" na
+hero, e o `<h3>` da oncologia junto com eles. **Os nomes das regiões anatômicas
+ficam de fora, em Light 300**: lá o destaque já vem do grifo (fundo `--tinta`),
+e somar peso ao grifo só engrossaria a faixa. Onde não há grifo, quem destaca
+é o peso. Em corpo grande o Light 300 da Cormorant afina até o título perder a voz
+para a lista que vem embaixo; o 300 ficou para o que é rótulo. A troca custa de
+1% a 4% de largura (medido nas sete linhas de título), então nenhuma quebra muda —
+mas se mexer no corpo dos títulos, meça de novo.
+
+Na hero o destaque por peso continua: "Clareza"/"Precisão" em `<em>` com
+`font-style: normal`, SemiBold 600 contra o Light 300 do resto da frase. O
+destaque marca sempre o par de palavras que carrega o sentido, nunca uma palavra
+solta. **Em locais esse jogo acabou**: com o título inteiro em 600, o `<em>` de
+"Duas"/"quatro" não pesa mais que a frase e só neutraliza o itálico. Se o destaque
+tiver de voltar ali, baixe o resto da frase — subir as duas palavras para 700 não
+resolve, porque 700 ao lado de 600 mal se distingue na Cormorant.
 
 As **versais espaçadas** ficaram para os rótulos, não para os títulos:
 sobrancelhas, nomes de cidade (`.cidade h3`) e o nome no rodapé. A divisão é
 deliberada — título é caixa mista, rótulo é caixa alta.
 
-**Há uma camada de grão** (`body::after`, ruído SVG em `feTurbulence`, 5% de
-opacidade, `position: fixed`, `z-index: 300`, `pointer-events: none`) por cima da
-página inteira. Ela tira o aspecto chapado dos fundos e dos gradientes. Como fica
-acima de tudo, qualquer elemento novo com `z-index` alto precisa de
+**Há uma camada de grão** (`body::after`, ruído SVG em `feTurbulence`,
+**`opacity: .11`**, `position: fixed`, `z-index: 300`, `pointer-events: none`) por
+cima da página inteira. Ela tira o aspecto chapado dos fundos e dos gradientes.
+Como fica acima de tudo, qualquer elemento novo com `z-index` alto precisa de
 `pointer-events` coerente — mas nada é bloqueado por ela.
+
+**E ela comprime o contraste de tudo, porque fica acima de figura E de fundo.**
+Isso nunca esteve escrito aqui e vale mais que o número: toda razão medida nos
+tokens é um teto, não o valor real na tela. Medido compondo o ruído nos dois
+extremos: `--tinta-suave` sobre `--papel` cai de 6.18 para **4.74**;
+`--musgo-suave` sobre `--musgo` de 6.63 para **5.04**; e a sobrancelha de
+`#locais` no topo do gradiente, de 5.89 para **4.55** — passa AA por 0,05, e é a
+margem mais fina da página. Clarear a ponta `#343B49` ou subir o grão reprova.
 
 **O título da hero não é o nome do médico.** É uma frase sobre postura
 profissional ("Clareza nos diagnósticos. Precisão nos tratamentos"); o nome está
@@ -121,6 +143,33 @@ título.
 A oncologia fica **fora** da régua, num bloco próprio: ela atravessa todas as
 regiões em vez de ocupar uma.
 
+**O bloco de oncologia tem quatro partes, nesta ordem, e cada uma existe por um
+motivo.** (1) O título leva **grifo invertido**: nas regiões o fundo é claro e a
+caixinha é de `--tinta`; aqui o fundo é o verde, então a caixinha é de `--papel`
+e a palavra fica `--musgo` (7.1:1). Sem ele, título e corpo eram a mesma cor e
+só o peso separava. (2) Os dois parágrafos ficam em **duas colunas**
+(`auto-fit`, `minmax(min(28rem, 100%), 1fr)`): a caixa tem ~1100px e uma coluna
+só de 58ch deixava a metade direita vazia. O acolhimento (`--papel` cheio) pesa
+mais que o lead (`--musgo-suave`) de propósito. (3) A lista abre com uma **frase
+de entrada** em peso 600 e corpo 1,08rem, porque ela não pode começar do nada.
+(4) O convite fecha **centralizado, em coluna**: frase e botão um sobre o outro,
+no eixo da caixa.
+
+**A caixa verde é uma superfície só.** Já tentei destacar a lista com uma faixa
+mais escura sangrada até as bordas, e o dono do projeto vetou: alternar tom
+dentro da caixa suja o bloco. O que separa a lista do texto acima é **folga**
+(2,6rem) e a frase de entrada, não cor. Não devolva o fundo.
+
+**E o convite é centralizado por causa da marca d'água.** Ele já foi uma linha
+com `justify-content: space-between`, que encostava o botão na borda direita —
+bem em cima do símbolo do canto inferior direito. Centralizado, o botão cai na
+faixa vazia do meio e a marca continua onde sempre esteve. Se voltar a alinhar
+o botão à direita, a marca precisa sair, e aí o bloco perde a assinatura.
+
+Medidos na caixa: grifo 7.1:1, frase de entrada 7.1:1 (5.9:1 sob a marca),
+lista 6.6:1 (5.6:1 sob a marca), acolhimento e convite 7.1:1. Mexeu no
+`--musgo-suave` ou na opacidade da marca, remede.
+
 `assets/instrucoes/instrucoes.md` (identidade visual) e `assets/instrucoes/informacoes.md`
 (conteúdo médico) são a fonte de verdade original. Este arquivo resume os dois, mas em caso
 de conflito o briefing manda.
@@ -142,6 +191,17 @@ corrido. Então o `--pedra` ficou restrito a fios, réguas e campos lavados, e o
 secundário usa `--tinta-suave` `#5C6274` (5.0:1 no claro) e `--papel-suave` `#B8BDB6`
 (7.2:1 no escuro). Não devolva o `#88857C` para texto pequeno.
 
+**O anel de foco é um token, não uma cor fixa.** `--foco` nasce `--musgo` no
+`:root` e é redefinido para `--papel` em `.hero`, `.secao--tinta`, `.rodape`,
+`.oncologia`, `.navbar` (e de volta para `--musgo` em `.navbar--assentada`), no
+`.pular` e no painel `.menu` do mobile. Antes era `outline: 2px solid
+var(--musgo)` global, e o verde só contrasta com o claro: dava **1.59:1** sobre
+`--tinta`, **1.30:1** no topo do gradiente de `#locais` e **1.00:1** sobre o
+próprio botão verde, contra os 3:1 que a WCAG 1.4.11 pede. Na prática a
+navegação por teclado não tinha indicador visível em nenhuma seção escura —
+inclusive nos quatro links de endereço. Hoje o pior caso é 7.10:1. **Superfície
+escura nova precisa redefinir `--foco`.**
+
 **Regra de pareamento da logo** (do manual, não negociável):
 fundo `#E5EAE3` → logo `#272D3B`; **qualquer outro fundo** → logo `#E5EAE3`.
 
@@ -150,8 +210,11 @@ Transições entre seções devem ser suaves, com gradientes dentro da paleta.
 ### Tipografia
 
 ```css
-/* Títulos — CAIXA ALTA, peso light. Auto-hospedada (OFL), pesos 300/400/500/600. */
+/* Rótulos — CAIXA ALTA, peso light. Auto-hospedada (OFL), pesos 300/400/500/600. */
 font-family: "Cormorant", serif;  font-weight: 300;  text-transform: uppercase;
+
+/* Títulos de seção — caixa mista, SemiBold. */
+font-family: "Cormorant", serif;  font-weight: 600;  text-transform: none;
 
 /* Corpo — kit do Adobe Fonts. */
 font-family: "seravek-web", system-ui, sans-serif;  font-weight: 400;
@@ -174,7 +237,7 @@ Três, todas decorativas (`alt=""`, `aria-hidden`), todas por baixo do texto:
 
 | Onde | Imagem | Tratamento |
 |---|---|---|
-| Hero | o **símbolo animado**, em claro (`color: var(--papel)`) | altura total da seção, à direita; máscara linear faz a opacidade cair da direita para a esquerda, acompanhando o gradiente azul. No mobile: centralizado, com máscara radial. `logo/simbolo-branco.png` não é mais usado no site |
+| Hero | o **símbolo animado**, em claro (`color: var(--papel)`) | altura total da seção, à direita; máscara linear faz a opacidade cair da direita para a esquerda, acompanhando o gradiente azul. No mobile: centralizado, com máscara radial. `logo/simbolo-branco.png` não é usado aqui (mas é, sim, no canto da oncologia) |
 | Especialidades | `rm-isolada.webp` | vive **dentro do `.territorio`**: a altura é exatamente a da régua, de "crânio" a "tórax". No desktop começa em `left: 46%`, depois da coluna de texto, e sangra pela direita; no mobile toma a largura da tela em `cover`, como o painel do menu |
 | Menu mobile | `rm-pescoco.webp` | o painel inteiro, com o azul em `mix-blend-mode: color` |
 | Contato | o próprio símbolo animado | centralizado atrás do texto, `opacity: .085` |
@@ -232,6 +295,10 @@ Botões e pílulas são **totalmente arredondados** (`border-radius: 999px`), em
 conversa com o avatar circular do WhatsApp e com os brasões das instituições.
 Não volte para cantos retos.
 
+**Todo botão cheio esvazia no hover** — fundo transparente, e o texto e a borda
+assumem a cor que era o fundo. Isso só funciona se essa cor contrastar com a
+seção: veja a pegadinha do botão verde.
+
 ### Movimento
 
 Lento e elegante: as aparições levam **1,6 s** com `--curva-lenta` e sobem 28 px.
@@ -257,6 +324,14 @@ Locais de atendimento:
 
 Contatos: WhatsApp **+55 42 99973-4488** (principal) · Instagram **@drmariodegeus** (secundário,
 só na seção de contato).
+
+Em `#contato` são **três botões em duas linhas**: WhatsApp e Instagram
+preenchidos lado a lado, e o telefone (`tel:`) embaixo, em `.botao--contorno`
+e em corpo normal. A hierarquia é essa mesma: preenchido escuro > preenchido
+verde > contorno. O telefone existe porque o público é adulto e idoso e nem
+todo mundo escreve; antes o número só existia codificado dentro da URL do
+`wa.me` e não havia o que discar. O rótulo "Prefere ligar? …" foge do imperativo
+dos outros CTAs por pedido do dono do projeto.
 
 ### Link do WhatsApp
 
@@ -289,10 +364,19 @@ Nunca prometa resultado de tratamento nem cura.
 - `public/img/<slug>-1600.webp` e `-800.webp` — use em `srcset`. Slugs das fotos citadas
   no briefing: **`hero`** (hero section), **`formacao`** (seção de formação médica),
   **`whatsapp`**. As demais viram `foto-NN`.
+- `public/img/hero-mobile-{1400,700}.webp` — a foto da hero **já recortada em
+  quadrado**, que é a caixa dela no mobile. A 3:2 inteira só chegava em 800px de
+  largura ali e o `cover` jogava fora um terço: sobravam ~533px de foto esticados
+  para os ~1200 de um celular retina, e dava para ver. O recorte sai do build
+  (`crop=4000:4000:380:0` sobre o original 6000×4000), que é exatamente o que o
+  `object-position: 19% 50%` mostrava — por isso o CSS do mobile agora usa
+  `object-position: 50% 50%`. Se mudar o enquadramento, mude o `crop`, não o CSS.
 - `public/img/whatsapp-320.webp` — quadrada, já enquadrada no rosto, para o botão
   flutuante recortado em círculo, ao lado da frase "Como posso ajudar?".
 - `public/img/logo/{horizontal,principal,simbolo,circular}-{azul,branco}.png` e os patterns.
-- `public/fonts/Cormorant-{Light,Regular}.woff2`.
+- `public/fonts/Cormorant-{Light,Regular,Medium,SemiBold}.woff2` — quatro pesos.
+  O CSS hoje casa 300, 400 e 600; o 500 fica declarado sem uso desde que os
+  títulos de seção subiram para SemiBold. Custo zero na rede (nunca é baixado).
 - `public/img/inst/{pucpr,iamspe,hcfmusp,fmusp}.png` — brasões das instituições,
   exibidos como ícone circular de fundo branco ao lado de cada formação. O círculo
   e o fundo são feitos em CSS, não estão gravados na imagem.
@@ -375,17 +459,35 @@ da primeira.
   e a altura vem do `aspect-ratio`.
 - **`opacity: .085` é o teto.** A marca d'água passa por baixo da chamada, que já
   cai de 5.6:1 para 5.0:1 aí. Mexeu na opacidade, remeça.
-- Duração no atributo `data-duracao` (M: 1,7 s; G: 2,2 s). Para a sequência do briefing —
-  M primeiro, depois G — atrase o `escrevendo` do G em ~1,7 s.
+- Duração no atributo `data-duracao` (M: 2,3 s; G: 2,0 s) — é o JS que lê esse valor
+  para encadear as letras. Para a sequência do briefing — M primeiro, depois G — o
+  `escrevendo` do G entra quando o M termina. As durações não são gosto: mantêm a
+  mesma velocidade de escrita nas duas letras (o M tem ~1970 unidades de traço, o G
+  ~1740). Se mudar o `d`, refaça a proporção, senão uma letra sai correndo.
 - `prefers-reduced-motion` já está tratado: a letra aparece inteira, sem animação.
 
-**A ordem e o sentido dos traços do G não são arbitrários.** A perninha (`t3`) e a
-haste vertical (`t4`) nascem no mesmo ponto (686, 358). Com a perninha desenhada
-**a partir** desse ponto, a ponta arredondada de 110 de largura acendia um pedaço
-da haste que ficava órfão na tela por meio segundo, até a haste ser escrita — o
-usuário viu e reclamou. Por isso a perninha é desenhada **de trás para frente**
-(`M 548 512 L 686 358`): ela parte da ponta livre, chega no canto, e a haste
-começa no instante seguinte e continua dali. Não inverta esse `d` de volta.
+**O G é um traço só, e é assim que ele tem de ficar.** Já foram quatro `<path>`
+com atrasos encadeados (arco de cima, arco de baixo, perninha, haste) e aquilo
+nunca fechou: sobrava um vão de ~31° entre os dois arcos que a máscara não
+alcançava, a perninha precisava ser desenhada de trás para frente para não acender
+um pedaço órfão da haste, e cada traço a mais era mais um ponto onde a ponta
+redonda aparecia antes da hora. Hoje é um `d` contínuo:
+
+```
+M 650 250 A 286 286 0 1 0 676 783 L 686 358 L 548 512
+```
+
+Começa na ponta de cima do G, desce em sentido anti-horário pela esquerda, dá a
+volta por baixo, sobe pela haste da direita e termina na ponta da perninha, no
+miolo da letra — a mão nunca levanta do papel. O arco é o círculo de centro
+(560, 521) e raio 286; com o pincel de 110 isso dá uma faixa de [231, 341] contra
+os [239, 331] que o glifo ocupa. **Rasterizei para conferir: 0 pixel do glifo
+fica sem revelar** (o arranjo antigo deixava 15, no vão do canto superior
+esquerdo). Se mexer no raio ou no centro, refaça essa medição — a folga é de
+menos de 10 unidades de cada lado.
+
+Tem de continuar sendo **um único subpath**: `stroke-dasharray` reinicia a cada
+`M`, e é essa emenda que obrigava os atrasos encadeados.
 
 ## Pegadinhas
 
@@ -407,9 +509,16 @@ começa no instante seguinte e continua dali. Não inverta esse `d` de volta.
   vem depois no HTML — vencia para o M também, e o M rodava com a duração do G.
   Por isso cada regra é prefixada por `.simbolo-letra--m` / `--g`. Se acrescentar
   uma terceira letra ou símbolo animado, escope do mesmo jeito.
-- `stroke-dasharray` **reinicia a cada subpath** de um `<path>`. Por isso cada traço da
-  animação é um `<path>` separado com seu próprio `animation-delay`; não junte tudo num
-  `d` só achando que o dash vai atravessar em sequência.
+- `stroke-dasharray` **reinicia a cada subpath** de um `<path>`. Um traço que precisa
+  atravessar em sequência tem de ser um `d` contínuo, sem um segundo `M`; se precisar
+  mesmo de traços separados, cada um vira um `<path>` com seu próprio `animation-delay`.
+- **Dash encostado na ponta do caminho + `stroke-linecap: round` = disco.** Era
+  `stroke-dasharray: 1 1` com `stroke-dashoffset: 1`: o dash terminava exatamente no
+  ponto 0 do caminho, virava um traço de comprimento zero e a ponta redonda o desenhava
+  como um disco do tamanho do pincel. Resultado: pedaços da letra acesos **antes** da
+  animação começar, um por traço — muito visível no G, que tinha quatro. Por isso o vão
+  agora é `1 1.5` e o recuo `1.01`, que param o traço inteiro fora do caminho. Vale para
+  as duas letras; se acrescentar outra, copie esses valores.
 - **A navbar assentada é sólida de propósito.** Depois do scroll ela é fixa e cruza
   seções claras e escuras com texto escuro. Qualquer transparência deixa o conteúdo
   de baixo vazar por trás das palavras — foi testado e ficou ilegível.
@@ -441,6 +550,13 @@ começa no instante seguinte e continua dali. Não inverta esse `d` de volta.
 - **`opacity` em texto é redução de contraste disfarçada.** O "Ver no mapa" a 75%
   de opacidade caía para 3.0:1 sobre o gradiente. Hierarquia se faz com corpo,
   espacejamento e caixa — não baixando a opacidade de texto pequeno.
+- **O botão que esvazia no hover tem de vestir a própria cor, não o papel.** O
+  `.botao--verde` aparece em dois fundos: a hero (escura) e `#contato` (clara).
+  A regra genérica pintava texto e borda de `--papel` no hover — certo na hero,
+  e em `#contato` o botão sumia contra o fundo `--papel`. Invisível, não discreto.
+  Agora o genérico usa `--musgo` (7.2:1 sobre o papel, 6.1:1 sob a marca d'água
+  do monograma) e a hero sobrescreve com `--papel`. Se levar um botão cheio para
+  uma seção nova, confira o hover nela — é o estado que ninguém testa.
 - **Elemento com fundo próprio engana a medição de contraste.** O harness esconde
   o elemento e amostra o que está atrás; num botão sólido isso remove o próprio
   fundo dele e a razão sai 1.00. Para botões preenchidos vale o valor nominal
@@ -479,3 +595,22 @@ começa no instante seguinte e continua dali. Não inverta esse `d` de volta.
 - As animações só escondem conteúdo quando a classe `js` está no `<html>` (um script
   inline no `<head>` a coloca). Sem JS a página nasce inteira e visível — confira isso
   antes de mexer nas regras `.entra` / `.revela`.
+- **O perigo não é o JS desligado, é o JS meio quebrado.** Com o JS desligado a
+  classe `js` nunca entra e a página nasce inteira. Mas com o JS ligado e o
+  `site.js` falhando (404, exceção, rede), a classe entra, os 31 blocos ficam em
+  `opacity: 0` e nada nunca os revela: a página serve **em branco**. Por isso
+  existem três coisas que não devem ser removidas: o `setTimeout` de 3s no
+  `<head>`, que tira a classe `js` se o `data-animado` não tiver sido marcado; o
+  `document.documentElement.setAttribute('data-animado', '')` como **primeira
+  linha** do `site.js`; e o helper `protegido()`, que põe cada bloco
+  independente em `try/catch` para que uma falha no menu não derrube a
+  revelação. Se acrescentar um bloco novo ao `site.js`, embrulhe nele.
+- **A foto da hero não leva `entra`, e isso é sobre métrica.** Ela é o elemento
+  de LCP, e o Chrome só o contabiliza quando fica visível: com `opacity: 0` e
+  transição de 1,6s, o `fetchpriority="high"` trazia o byte cedo e a própria
+  animação segurava a métrica por 1,6s. O texto ao lado continua entrando
+  escalonado; a foto nasce pronta. Não devolva a classe.
+- **Existe `@media print`.** Sem ele, imprimir sai em branco: o que não foi
+  rolado continua em `opacity: 0`, porque o observador só revela o que entrou na
+  tela. O bloco força opacidade 1, esconde flutuante/navbar/marcas d'água e
+  imprime o `href` de cada endereço ao lado do nome.

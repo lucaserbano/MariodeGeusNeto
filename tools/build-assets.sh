@@ -57,6 +57,31 @@ for src in "$SRC_FOTOS"/*.jpg; do
   done
 done
 
+# No mobile a hero entra numa caixa quadrada: o CSS recorta a foto 3:2 com
+# `object-fit: cover` e `object-position: 19% 50%`, o que mostra só a faixa
+# entre 6,33% e 73% da largura. Servir a 3:2 inteira ali é desperdício de
+# bytes e, pior, de resolução: dos 800px do arquivo antigo só 533 chegavam à
+# tela, esticados para os ~1200px de um celular retina — dava para ver que
+# era baixa resolução. Aqui o recorte já vem pronto e quadrado, então cada
+# pixel do arquivo é um pixel da tela.
+#
+# A conta do recorte: com `cover` numa caixa quadrada de lado S, a imagem
+# escala para 1,5S de largura e sobra 0,5S; `object-position-x` de 19% joga
+# 19% dessa sobra para a esquerda. Visível = [0,095S ; 1,095S] do escalado,
+# ou [6,333% ; 73%] do original — 4000 dos 6000px, começando em 380.
+# Se mudar o `object-position` do mobile, refaça a conta.
+echo "==> Hero mobile (recorte quadrado)"
+for w in 1400 700; do
+  dst="$OUT_IMG/hero-mobile-$w.webp"
+  if skip "$dst"; then log "= hero-mobile-$w.webp"; continue; fi
+  tmp="$(mktemp -t heromob).png"
+  ffmpeg -y -loglevel error -i "$SRC_FOTOS/Mario_estúdio (79 de 100).jpg" \
+    -vf "crop=4000:4000:380:0,scale=$w:$w:flags=lanczos" "$tmp"
+  cwebp -quiet -q 80 "$tmp" -o "$dst"
+  rm -f "$tmp"
+  log "+ hero-mobile-$w.webp ($(du -h "$dst" | cut -f1 | tr -d ' '))"
+done
+
 # A foto do botão flutuante de WhatsApp aparece recortada em círculo:
 # precisa de um quadrado enquadrado no rosto, não do retrato inteiro.
 # Recorte medido sobre o original 4000x6000 da foto 100.

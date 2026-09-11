@@ -4,6 +4,19 @@
 (function () {
   'use strict';
 
+  /* Primeira linha de todas: avisa ao temporizador do <head> que o script
+     chegou vivo. Qualquer exceção daqui para baixo ainda deixa a página
+     escondida, então os blocos independentes abaixo vão em try/catch. */
+  document.documentElement.setAttribute('data-animado', '');
+
+  /* Cada bloco é independente: uma falha no menu não pode impedir a revelação
+     do conteúdo. */
+  function protegido(nome, fn) {
+    try { fn(); } catch (e) {
+      if (window.console) console.error('site.js: falha em ' + nome, e);
+    }
+  }
+
   var paradoNaquieta = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ── navbar: ganha fundo depois que a hero sai ───────────── */
@@ -32,17 +45,19 @@
   }
 
   var pendente = false;
-  window.addEventListener('scroll', function () {
-    if (pendente) return;
-    pendente = true;
-    requestAnimationFrame(function () {
-      marcarNavbar();
-      marcarFlutuante();
-      pendente = false;
-    });
-  }, { passive: true });
-  marcarNavbar();
-  marcarFlutuante();
+  protegido('scroll', function () {
+    window.addEventListener('scroll', function () {
+      if (pendente) return;
+      pendente = true;
+      requestAnimationFrame(function () {
+        marcarNavbar();
+        marcarFlutuante();
+        pendente = false;
+      });
+    }, { passive: true });
+    marcarNavbar();
+    marcarFlutuante();
+  });
 
   /* ── menu mobile ─────────────────────────────────────────── */
   var botaoMenu = document.getElementById('menu-botao');
@@ -55,24 +70,26 @@
     document.body.style.overflow = '';
   }
 
-  botaoMenu.addEventListener('click', function () {
-    var aberto = botaoMenu.getAttribute('aria-expanded') === 'true';
-    if (aberto) { fecharMenu(); return; }
-    botaoMenu.setAttribute('aria-expanded', 'true');
-    menu.classList.add('menu--aberto');
-    navbar.classList.add('navbar--menu-aberto');
-    document.body.style.overflow = 'hidden';
-  });
+  protegido('menu', function () {
+    botaoMenu.addEventListener('click', function () {
+      var aberto = botaoMenu.getAttribute('aria-expanded') === 'true';
+      if (aberto) { fecharMenu(); return; }
+      botaoMenu.setAttribute('aria-expanded', 'true');
+      menu.classList.add('menu--aberto');
+      navbar.classList.add('navbar--menu-aberto');
+      document.body.style.overflow = 'hidden';
+    });
 
-  menu.addEventListener('click', function (e) {
-    if (e.target.closest('a')) fecharMenu();
-  });
+    menu.addEventListener('click', function (e) {
+      if (e.target.closest('a')) fecharMenu();
+    });
 
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && botaoMenu.getAttribute('aria-expanded') === 'true') {
-      fecharMenu();
-      botaoMenu.focus();
-    }
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && botaoMenu.getAttribute('aria-expanded') === 'true') {
+        fecharMenu();
+        botaoMenu.focus();
+      }
+    });
   });
 
   /* ── entrada da hero: encadeada, lenta ───────────────────── */
@@ -140,6 +157,8 @@
 
   /* a marca da hero é alta e larga: exigir 55% dela na tela nunca fecharia
      em telas baixas, então o limiar aqui é menor */
-  prepararSimbolo(document.getElementById('monograma-hero'), 0.9, 0.2);
-  prepararSimbolo(document.getElementById('monograma'), 0, 0.45);
+  protegido('símbolo', function () {
+    prepararSimbolo(document.getElementById('monograma-hero'), 0.9, 0.2);
+    prepararSimbolo(document.getElementById('monograma'), 0, 0.45);
+  });
 })();

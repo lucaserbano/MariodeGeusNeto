@@ -1,16 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="106 175 787 649" class="simbolo-letra simbolo-letra--g" data-duracao="2.2800000000000002" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="106 175 787 649" class="simbolo-letra simbolo-letra--g" data-duracao="2" aria-hidden="true">
   <style>
     .simbolo-letra--g .tracado path {
       fill: none; stroke: #fff; stroke-width: 110;
       stroke-linecap: round; stroke-linejoin: round;
-      /* pathLength=1 normaliza o comprimento: o dash vai de 1 (oculto) a 0 (completo) */
-      stroke-dasharray: 1 1; stroke-dashoffset: 1;
+      /* pathLength=1 normaliza o comprimento: o dash vai de 1 (oculto) a 0
+         (completo). O vão de 1,5 e o recuo de 1,01 tiram o traço inteiro de
+         cima do caminho antes de começar: com `1 1` e recuo de exatamente 1,
+         o dash termina em cima do ponto 0 e a ponta redonda de 110 acendia um
+         disco ali — eram esses os pedaços da letra que apareciam antes da
+         animação, um por traço. */
+      stroke-dasharray: 1 1.5; stroke-dashoffset: 1.01;
     }
     @keyframes escrever-g { to { stroke-dashoffset: 0; } }
-    .simbolo-letra--g.escrevendo .t1 { animation: escrever-g 0.42s ease-in-out 0s forwards; }
-    .simbolo-letra--g.escrevendo .t2 { animation: escrever-g 0.8s ease-in-out 0.52s forwards; }
-    .simbolo-letra--g.escrevendo .t3 { animation: escrever-g 0.3s ease-in-out 1.42s forwards; }
-    .simbolo-letra--g.escrevendo .t4 { animation: escrever-g 0.56s ease-in-out 1.72s forwards; }
+    .simbolo-letra--g.escrevendo .t1 { animation: escrever-g 2s ease-in-out 0s forwards; }
     /* Sem animação: a letra já aparece inteira. */
     @media (prefers-reduced-motion: reduce) {
       .simbolo-letra .tracado path { stroke-dashoffset: 0; animation: none !important; }
@@ -19,10 +21,13 @@
   <defs>
     <mask id="tracado-g" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
       <g class="tracado">
-      <path class="t1" pathLength="1" d="M 650 250 A 286 286 0 0 0 400 292"/>
-      <path class="t2" pathLength="1" d="M 303 408 A 286 286 0 0 0 668 781"/>
-      <path class="t3" pathLength="1" d="M 548 512 L 686 358"/>
-      <path class="t4" pathLength="1" d="M 686 358 L 676 794"/>
+      <!-- Um traço só, sem emenda: começa na ponta de cima do G, desce em
+           sentido anti-horário pela esquerda, dá a volta por baixo, sobe pela
+           haste da direita e termina na ponta da perninha, no miolo da letra.
+           Tem de ser um único subpath — `stroke-dasharray` reinicia a cada
+           `M`, e era a emenda entre os quatro traços que pedia os atrasos
+           encadeados de antes. -->
+      <path class="t1" pathLength="1" d="M 650 250 A 286 286 0 1 0 676 783 L 686 358 L 548 512"/>
       </g>
     </mask>
   </defs>

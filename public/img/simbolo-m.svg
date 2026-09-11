@@ -3,8 +3,12 @@
     .simbolo-letra--m .tracado path {
       fill: none; stroke: #fff; stroke-width: 150;
       stroke-linecap: round; stroke-linejoin: round;
-      /* pathLength=1 normaliza o comprimento: o dash vai de 1 (oculto) a 0 (completo) */
-      stroke-dasharray: 1 1; stroke-dashoffset: 1;
+      /* pathLength=1 normaliza o comprimento: o dash vai de 1 (oculto) a 0
+         (completo). O vão é 1,5 e o recuo 1,01 — e não `1 1` com recuo 1 —
+         para o traço parar inteiro fora do caminho: encostando exatamente nas
+         pontas, o dash vira um ponto de comprimento zero e a ponta redonda o
+         desenha como disco. */
+      stroke-dasharray: 1 1.5; stroke-dashoffset: 1.01;
     }
     @keyframes escrever-m { to { stroke-dashoffset: 0; } }
     .simbolo-letra--m.escrevendo .t1 { animation: escrever-m 2.3s ease-in-out 0s forwards; }

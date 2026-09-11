@@ -3,13 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dr. Mario de Geus Neto — Otorrinolaringologia e Cirurgia de Cabeça e Pescoço</title>
+<title>Dr. Mario de Geus Neto: Otorrinolaringologia e Cirurgia de Cabeça e Pescoço</title>
 <meta name="description" content="Dr. Mario de Geus Neto, otorrinolaringologista e cirurgião de cabeça e pescoço. Diagnóstico e tratamento das condições do ouvido, nariz, garganta, tireoide e pescoço. Curitiba e Ponta Grossa.">
 <link rel="icon" href="public/img/logo/simbolo-azul.png">
 <link rel="preconnect" href="https://use.typekit.net" crossorigin>
 <link rel="stylesheet" href="https://use.typekit.net/czr1bwa.css">
 <link rel="stylesheet" href="css/estilo.css">
-<script>document.documentElement.classList.add('js');</script>
+<script>
+  document.documentElement.classList.add('js');
+  /* Rede de segurança. A classe acima é o que autoriza o CSS a esconder os 31
+     blocos de conteúdo até o JS revelá-los. Com o JS desligado ela nunca entra
+     e a página nasce inteira — mas com o JS ligado e o site.js falhando (404,
+     exceção, rede), ela entra e nada nunca revela: a página serviria em branco.
+     O site.js marca `data-animado` assim que começa; se em 3s isso não tiver
+     acontecido, desistimos de animar e devolvemos a página. */
+  setTimeout(function () {
+    if (!document.documentElement.hasAttribute('data-animado')) {
+      document.documentElement.classList.remove('js');
+    }
+  }, 3000);
+</script>
 </head>
 <body>
 
@@ -17,7 +30,7 @@
 
 <header class="navbar" id="navbar">
   <div class="navbar__interior">
-    <a class="navbar__logo" href="#inicio" aria-label="Dr. Mario de Geus Neto — início">
+    <a class="navbar__logo" href="#inicio" aria-label="Dr. Mario de Geus Neto, início">
       <img class="navbar__logo--claro" src="public/img/logo/horizontal-branco.png" alt="Dr. Mario de Geus Neto, otorrinolaringologista e cirurgião de cabeça e pescoço" width="900" height="243">
       <img class="navbar__logo--escuro" src="public/img/logo/horizontal-azul.png" alt="" aria-hidden="true" width="900" height="243">
     </a>
@@ -45,9 +58,18 @@
 
 <!-- ─────────────────────────────────────────────  hero  ── -->
 <section class="hero" id="inicio">
-  <div class="hero__retrato entra" data-atraso="1">
+  <!-- Sem `entra`: esta foto é o elemento de LCP, e o Chrome só o contabiliza
+       quando ele fica visível. Com `opacity: 0` e transição de 1,6s, o
+       `fetchpriority="high"` trazia o byte cedo e a própria animação segurava
+       a métrica. A foto já está na tela no carregamento; o fade nela não
+       revelava nada. O texto ao lado continua entrando escalonado. -->
+  <div class="hero__retrato">
     <picture>
-      <source media="(max-width: 820px)" srcset="public/img/hero-800.webp">
+      <!-- No mobile a caixa é quadrada: a foto já vem recortada assim, para
+           não gastar resolução na faixa que o `cover` descarta. -->
+      <source media="(max-width: 820px)"
+              srcset="public/img/hero-mobile-700.webp 700w, public/img/hero-mobile-1400.webp 1400w"
+              sizes="100vw" width="1400" height="1400">
       <img src="public/img/hero-1600.webp" alt="Dr. Mario de Geus Neto" width="1600" height="1067" fetchpriority="high">
     </picture>
   </div>
@@ -60,8 +82,12 @@
     .simbolo-letra--m .tracado path {
       fill: none; stroke: #fff; stroke-width: 150;
       stroke-linecap: round; stroke-linejoin: round;
-      /* pathLength=1 normaliza o comprimento: o dash vai de 1 (oculto) a 0 (completo) */
-      stroke-dasharray: 1 1; stroke-dashoffset: 1;
+      /* pathLength=1 normaliza o comprimento: o dash vai de 1 (oculto) a 0
+         (completo). O vão é 1,5 e o recuo 1,01 — e não `1 1` com recuo 1 —
+         para o traço parar inteiro fora do caminho: encostando exatamente nas
+         pontas, o dash vira um ponto de comprimento zero e a ponta redonda o
+         desenha como disco. */
+      stroke-dasharray: 1 1.5; stroke-dashoffset: 1.01;
     }
     @keyframes escrever-m { to { stroke-dashoffset: 0; } }
     .simbolo-letra--m.escrevendo .t1 { animation: escrever-m 2.3s ease-in-out 0s forwards; }
@@ -79,19 +105,21 @@
   </defs>
   <path d="M 124 218.500 C 124 220.772, 124.387 221.001, 128.250 221.013 C 135.632 221.036, 150.967 224.762, 158.602 228.388 C 168.171 232.933, 175.139 239.505, 179.259 247.874 L 182.500 254.458 182.500 511.500 L 182.500 768.542 179.259 775.126 C 171.949 789.974, 154.449 799.748, 131.792 801.638 C 124.458 802.249, 124 802.426, 124 804.644 L 124 807 206 807 L 288 807 288 804.500 C 288 802.228, 287.613 801.999, 283.750 801.987 C 276.155 801.963, 261.297 798.283, 253.332 794.451 C 244.317 790.115, 236.594 782.935, 232.951 775.500 L 230.500 770.500 230.243 507.250 C 230.101 362.462, 230.326 244, 230.743 244.001 C 232.292 244.002, 243.310 253.406, 273 280.071 C 408.471 401.737, 493.075 477.818, 496.144 480.736 L 499.789 484.200 588.644 404.323 C 756.615 253.325, 767.129 244, 769.399 244 C 769.738 244, 769.899 362.462, 769.757 507.250 L 769.500 770.500 766.073 776.821 C 764.188 780.297, 760.603 784.940, 758.107 787.137 C 749.527 794.689, 734.066 800.440, 718.931 801.709 C 712.483 802.250, 712 802.454, 712 804.645 L 712 807 794 807 L 876 807 876 804.644 C 876 802.426, 875.542 802.249, 868.208 801.638 C 845.494 799.743, 827.169 789.432, 820.374 774.722 L 817.500 768.500 817.500 511.500 L 817.500 254.500 820.374 248.278 C 824.115 240.180, 831.708 232.990, 841.362 228.405 C 849.028 224.764, 864.356 221.036, 871.750 221.013 C 875.613 221.001, 876 220.772, 876 218.500 L 876 216 804.250 216.028 L 732.500 216.055 616.500 320.518 C 552.700 377.972, 500.264 424.985, 499.975 424.990 C 499.686 424.996, 447.261 377.995, 383.475 320.545 L 267.500 216.090 195.750 216.045 L 124 216 124 218.500" fill="currentColor" fill-rule="evenodd" mask="url(#tracado-m-hero)"/>
 </svg></span>
-    <span class="monograma__letra"><svg xmlns="http://www.w3.org/2000/svg" viewBox="106 175 787 649" class="simbolo-letra simbolo-letra--g" data-duracao="2.2800000000000002" aria-hidden="true">
+    <span class="monograma__letra"><svg xmlns="http://www.w3.org/2000/svg" viewBox="106 175 787 649" class="simbolo-letra simbolo-letra--g" data-duracao="2" aria-hidden="true">
   <style>
     .simbolo-letra--g .tracado path {
       fill: none; stroke: #fff; stroke-width: 110;
       stroke-linecap: round; stroke-linejoin: round;
-      /* pathLength=1 normaliza o comprimento: o dash vai de 1 (oculto) a 0 (completo) */
-      stroke-dasharray: 1 1; stroke-dashoffset: 1;
+      /* pathLength=1 normaliza o comprimento: o dash vai de 1 (oculto) a 0
+         (completo). O vão de 1,5 e o recuo de 1,01 tiram o traço inteiro de
+         cima do caminho antes de começar: com `1 1` e recuo de exatamente 1,
+         o dash termina em cima do ponto 0 e a ponta redonda de 110 acendia um
+         disco ali — eram esses os pedaços da letra que apareciam antes da
+         animação, um por traço. */
+      stroke-dasharray: 1 1.5; stroke-dashoffset: 1.01;
     }
     @keyframes escrever-g { to { stroke-dashoffset: 0; } }
-    .simbolo-letra--g.escrevendo .t1 { animation: escrever-g 0.42s ease-in-out 0s forwards; }
-    .simbolo-letra--g.escrevendo .t2 { animation: escrever-g 0.8s ease-in-out 0.52s forwards; }
-    .simbolo-letra--g.escrevendo .t3 { animation: escrever-g 0.3s ease-in-out 1.42s forwards; }
-    .simbolo-letra--g.escrevendo .t4 { animation: escrever-g 0.56s ease-in-out 1.72s forwards; }
+    .simbolo-letra--g.escrevendo .t1 { animation: escrever-g 2s ease-in-out 0s forwards; }
     /* Sem animação: a letra já aparece inteira. */
     @media (prefers-reduced-motion: reduce) {
       .simbolo-letra .tracado path { stroke-dashoffset: 0; animation: none !important; }
@@ -100,10 +128,13 @@
   <defs>
     <mask id="tracado-g-hero" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
       <g class="tracado">
-      <path class="t1" pathLength="1" d="M 650 250 A 286 286 0 0 0 400 292"/>
-      <path class="t2" pathLength="1" d="M 303 408 A 286 286 0 0 0 668 781"/>
-      <path class="t3" pathLength="1" d="M 548 512 L 686 358"/>
-      <path class="t4" pathLength="1" d="M 686 358 L 676 794"/>
+      <!-- Um traço só, sem emenda: começa na ponta de cima do G, desce em
+           sentido anti-horário pela esquerda, dá a volta por baixo, sobe pela
+           haste da direita e termina na ponta da perninha, no miolo da letra.
+           Tem de ser um único subpath — `stroke-dasharray` reinicia a cada
+           `M`, e era a emenda entre os quatro traços que pedia os atrasos
+           encadeados de antes. -->
+      <path class="t1" pathLength="1" d="M 650 250 A 286 286 0 1 0 676 783 L 686 358 L 548 512"/>
       </g>
     </mask>
   </defs>
@@ -236,19 +267,38 @@
 
     <div class="oncologia revela">
       <img class="oncologia__marca" src="public/img/logo/simbolo-branco.png" alt="" aria-hidden="true" loading="lazy">
-      <h3>Oncologia de cabeça e pescoço</h3>
-      <p>Tumores do trato aerodigestivo alto e da pele da face pedem decisão rápida e acompanhamento próximo. Se você foi encaminhado com uma suspeita ou já tem um diagnóstico, leve seus exames à consulta.</p>
-      <ul>
-        <li>Câncer de tireoide, com ressecção e linfadenectomia</li>
-        <li>Câncer de boca, língua, lábio e assoalho bucal</li>
-        <li>Câncer de orofaringe e hipofaringe</li>
-        <li>Câncer de laringe, incluindo laringectomias</li>
-        <li>Esvaziamento cervical</li>
-        <li>Câncer de pele da face e do couro cabeludo, com reconstrução local</li>
-      </ul>
+      <!-- Grifo claro, ao contrário do das regiões: aqui o fundo é o verde, então
+           a caixinha é de papel e a palavra é que fica verde. É o que tira o
+           título da mesma cor do corpo do texto. -->
+      <h3><span class="grifo">Oncologia de cabeça e pescoço</span></h3>
+      <div class="oncologia__texto">
+        <p>Tumores do trato aerodigestivo alto e da pele da face pedem decisão rápida e acompanhamento próximo. Se você foi encaminhado com uma suspeita ou já tem um diagnóstico, leve seus exames à consulta.</p>
+        <!-- O acolhimento vem ANTES da lista, e não depois em corpo miúdo:
+             quem lê esta lista quer saber o que vai acontecer com ela quando
+             chegar lá. Os dois termos clínicos ficam glosados no lugar. -->
+        <p class="oncologia__acolhe">Toda consulta começa por uma conversa sobre a sua história e um exame físico. Quando há indicação, a nasofibrolaringoscopia (um exame com câmera fina, feito pelo nariz) é realizada ali mesmo, no consultório.</p>
+      </div>
+      <!-- A lista ganha zona própria: faixa mais escura, sangrada até as bordas
+           da caixa, com a sua frase de entrada. Não é um card dentro de outro,
+           é uma seção da mesma caixa. -->
+      <div class="oncologia__faixa">
+        <p class="oncologia__intro">Entre as condições que acompanho e opero nesta área:</p>
+        <ul>
+          <li>Câncer de tireoide, com ressecção e linfadenectomia</li>
+          <li>Câncer de boca, língua, lábio e assoalho bucal</li>
+          <li>Câncer de orofaringe e hipofaringe</li>
+          <li>Câncer de laringe, incluindo laringectomias</li>
+          <li>Esvaziamento cervical</li>
+          <li>Câncer de pele da face e do couro cabeludo, com reconstrução local</li>
+        </ul>
+      </div>
+      <!-- A saída. Sem ela, quem chega aqui no pior momento da página precisa
+           rolar por quatro hospitais até encontrar um botão. -->
+      <div class="oncologia__convite">
+        <p>Se você já tem exames em mãos, pode mandá-los pelo WhatsApp antes da consulta.</p>
+        <a class="botao" href="https://wa.me/5542999734488?text=Ol%C3%A1%21%20Gostaria%20de%20agendar%20uma%20consulta%20com%20o%20Dr.%20Mario%20de%20Geus%21" target="_blank" rel="noopener">Agende sua consulta</a>
+      </div>
     </div>
-
-    <p class="nota revela">Toda consulta começa por anamnese e exame físico. Quando há indicação, a nasofibrolaringoscopia é feita no próprio consultório.</p>
   </div>
 </section>
 
@@ -314,7 +364,7 @@
         </ul>
       </div>
     </div>
-    <p class="nota nota--clara revela">Cada endereço abre a localização no Google Maps. Horários e formas de atendimento variam por local — mande uma mensagem para confirmar o que atende melhor o seu caso.</p>
+    <p class="nota nota--clara revela">Cada endereço abre a localização no Google Maps. Horários e formas de atendimento variam por local. Mande uma mensagem para confirmar o que atende melhor o seu caso.</p>
   </div>
 </section>
 
@@ -329,8 +379,12 @@
     .simbolo-letra--m .tracado path {
       fill: none; stroke: #fff; stroke-width: 150;
       stroke-linecap: round; stroke-linejoin: round;
-      /* pathLength=1 normaliza o comprimento: o dash vai de 1 (oculto) a 0 (completo) */
-      stroke-dasharray: 1 1; stroke-dashoffset: 1;
+      /* pathLength=1 normaliza o comprimento: o dash vai de 1 (oculto) a 0
+         (completo). O vão é 1,5 e o recuo 1,01 — e não `1 1` com recuo 1 —
+         para o traço parar inteiro fora do caminho: encostando exatamente nas
+         pontas, o dash vira um ponto de comprimento zero e a ponta redonda o
+         desenha como disco. */
+      stroke-dasharray: 1 1.5; stroke-dashoffset: 1.01;
     }
     @keyframes escrever-m { to { stroke-dashoffset: 0; } }
     .simbolo-letra--m.escrevendo .t1 { animation: escrever-m 2.3s ease-in-out 0s forwards; }
@@ -348,19 +402,21 @@
   </defs>
   <path d="M 124 218.500 C 124 220.772, 124.387 221.001, 128.250 221.013 C 135.632 221.036, 150.967 224.762, 158.602 228.388 C 168.171 232.933, 175.139 239.505, 179.259 247.874 L 182.500 254.458 182.500 511.500 L 182.500 768.542 179.259 775.126 C 171.949 789.974, 154.449 799.748, 131.792 801.638 C 124.458 802.249, 124 802.426, 124 804.644 L 124 807 206 807 L 288 807 288 804.500 C 288 802.228, 287.613 801.999, 283.750 801.987 C 276.155 801.963, 261.297 798.283, 253.332 794.451 C 244.317 790.115, 236.594 782.935, 232.951 775.500 L 230.500 770.500 230.243 507.250 C 230.101 362.462, 230.326 244, 230.743 244.001 C 232.292 244.002, 243.310 253.406, 273 280.071 C 408.471 401.737, 493.075 477.818, 496.144 480.736 L 499.789 484.200 588.644 404.323 C 756.615 253.325, 767.129 244, 769.399 244 C 769.738 244, 769.899 362.462, 769.757 507.250 L 769.500 770.500 766.073 776.821 C 764.188 780.297, 760.603 784.940, 758.107 787.137 C 749.527 794.689, 734.066 800.440, 718.931 801.709 C 712.483 802.250, 712 802.454, 712 804.645 L 712 807 794 807 L 876 807 876 804.644 C 876 802.426, 875.542 802.249, 868.208 801.638 C 845.494 799.743, 827.169 789.432, 820.374 774.722 L 817.500 768.500 817.500 511.500 L 817.500 254.500 820.374 248.278 C 824.115 240.180, 831.708 232.990, 841.362 228.405 C 849.028 224.764, 864.356 221.036, 871.750 221.013 C 875.613 221.001, 876 220.772, 876 218.500 L 876 216 804.250 216.028 L 732.500 216.055 616.500 320.518 C 552.700 377.972, 500.264 424.985, 499.975 424.990 C 499.686 424.996, 447.261 377.995, 383.475 320.545 L 267.500 216.090 195.750 216.045 L 124 216 124 218.500" fill="currentColor" fill-rule="evenodd" mask="url(#tracado-m)"/>
 </svg></span>
-    <span class="monograma__letra"><svg xmlns="http://www.w3.org/2000/svg" viewBox="106 175 787 649" class="simbolo-letra simbolo-letra--g" data-duracao="2.2800000000000002" aria-hidden="true">
+    <span class="monograma__letra"><svg xmlns="http://www.w3.org/2000/svg" viewBox="106 175 787 649" class="simbolo-letra simbolo-letra--g" data-duracao="2" aria-hidden="true">
   <style>
     .simbolo-letra--g .tracado path {
       fill: none; stroke: #fff; stroke-width: 110;
       stroke-linecap: round; stroke-linejoin: round;
-      /* pathLength=1 normaliza o comprimento: o dash vai de 1 (oculto) a 0 (completo) */
-      stroke-dasharray: 1 1; stroke-dashoffset: 1;
+      /* pathLength=1 normaliza o comprimento: o dash vai de 1 (oculto) a 0
+         (completo). O vão de 1,5 e o recuo de 1,01 tiram o traço inteiro de
+         cima do caminho antes de começar: com `1 1` e recuo de exatamente 1,
+         o dash termina em cima do ponto 0 e a ponta redonda de 110 acendia um
+         disco ali — eram esses os pedaços da letra que apareciam antes da
+         animação, um por traço. */
+      stroke-dasharray: 1 1.5; stroke-dashoffset: 1.01;
     }
     @keyframes escrever-g { to { stroke-dashoffset: 0; } }
-    .simbolo-letra--g.escrevendo .t1 { animation: escrever-g 0.42s ease-in-out 0s forwards; }
-    .simbolo-letra--g.escrevendo .t2 { animation: escrever-g 0.8s ease-in-out 0.52s forwards; }
-    .simbolo-letra--g.escrevendo .t3 { animation: escrever-g 0.3s ease-in-out 1.42s forwards; }
-    .simbolo-letra--g.escrevendo .t4 { animation: escrever-g 0.56s ease-in-out 1.72s forwards; }
+    .simbolo-letra--g.escrevendo .t1 { animation: escrever-g 2s ease-in-out 0s forwards; }
     /* Sem animação: a letra já aparece inteira. */
     @media (prefers-reduced-motion: reduce) {
       .simbolo-letra .tracado path { stroke-dashoffset: 0; animation: none !important; }
@@ -369,10 +425,13 @@
   <defs>
     <mask id="tracado-g" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
       <g class="tracado">
-      <path class="t1" pathLength="1" d="M 650 250 A 286 286 0 0 0 400 292"/>
-      <path class="t2" pathLength="1" d="M 303 408 A 286 286 0 0 0 668 781"/>
-      <path class="t3" pathLength="1" d="M 548 512 L 686 358"/>
-      <path class="t4" pathLength="1" d="M 686 358 L 676 794"/>
+      <!-- Um traço só, sem emenda: começa na ponta de cima do G, desce em
+           sentido anti-horário pela esquerda, dá a volta por baixo, sobe pela
+           haste da direita e termina na ponta da perninha, no miolo da letra.
+           Tem de ser um único subpath — `stroke-dasharray` reinicia a cada
+           `M`, e era a emenda entre os quatro traços que pedia os atrasos
+           encadeados de antes. -->
+      <path class="t1" pathLength="1" d="M 650 250 A 286 286 0 1 0 676 783 L 686 358 L 548 512"/>
       </g>
     </mask>
   </defs>
@@ -382,7 +441,7 @@
   <div class="envelope contato__interior">
     <p class="sobrancelha revela">Contato</p>
     <h2 class="revela">Deixe-me entender<br>a sua situação</h2>
-    <p class="chamada revela">Vamos conversar sobre suas queixas? Mande uma mensagem no WhatsApp. Conte brevemente o que está sentindo e retornaremos com os horários disponíveis para atendimento.</p>
+    <p class="chamada revela">Vamos conversar sobre o que você está sentindo? Mande uma mensagem no WhatsApp, conte brevemente o seu caso, e eu retorno com os horários disponíveis.</p>
     <div class="contato__acoes revela">
       <a class="botao botao--grande" href="https://wa.me/5542999734488?text=Ol%C3%A1%21%20Gostaria%20de%20agendar%20uma%20consulta%20com%20o%20Dr.%20Mario%20de%20Geus%21" target="_blank" rel="noopener">Agende sua consulta</a>
       <a class="botao botao--grande botao--verde" href="https://instagram.com/drmariodegeus" target="_blank" rel="noopener">
@@ -391,6 +450,13 @@
           <circle cx="12" cy="12" r="4.1" fill="none" stroke="currentColor" stroke-width="1.7"/>
           <circle cx="17.2" cy="6.8" r="1.15" fill="currentColor"/>
         </svg>@drmariodegeus</a>
+    </div>
+    <!-- O número como terceiro botão, em linha própria abaixo dos outros e em
+         contorno em vez de preenchido: terciário na hierarquia, mesmo alvo de
+         toque. Até aqui ele só existia codificado dentro da URL do wa.me, e
+         quem prefere ligar não tinha o que discar. -->
+    <div class="contato__ligar revela">
+      <a class="botao botao--contorno" href="tel:+5542999734488">Prefere ligar? +55 42 99973-4488</a>
     </div>
   </div>
 </section>
