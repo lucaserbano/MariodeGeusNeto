@@ -319,19 +319,22 @@ Formação:
 - Médico assistente e preceptor de ORL e CCP nos Hospitais Cajuru (HUC) e Evangélico Mackenzie (HUEM), em Curitiba-PR
 
 Locais de atendimento:
-- **Curitiba-PR**: Hospital Santa Cruz (CEMED) · Hospital Evangélico Mackenzie (convênios e particular)
+- **Curitiba-PR**: Hospital Santa Cruz · Hospital Evangélico Mackenzie
 - **Ponta Grossa-PR**: O1 Saúde · Hospital São Camilo
+
+Os quatro levam o mesmo rótulo, **"Convênios e particular"** — foi o dono do
+projeto que uniformizou. Não volte a diferenciar um do outro (o "CEMED" do Santa
+Cruz saiu daí).
 
 Contatos: WhatsApp **+55 42 99973-4488** (principal) · Instagram **@drmariodegeus** (secundário,
 só na seção de contato).
 
-Em `#contato` são **três botões em duas linhas**: WhatsApp e Instagram
-preenchidos lado a lado, e o telefone (`tel:`) embaixo, em `.botao--contorno`
-e em corpo normal. A hierarquia é essa mesma: preenchido escuro > preenchido
-verde > contorno. O telefone existe porque o público é adulto e idoso e nem
-todo mundo escreve; antes o número só existia codificado dentro da URL do
-`wa.me` e não havia o que discar. O rótulo "Prefere ligar? …" foge do imperativo
-dos outros CTAs por pedido do dono do projeto.
+Em `#contato` são **dois botões, lado a lado**: WhatsApp e Instagram, os dois
+preenchidos — escuro primeiro, verde depois. **Não há botão de telefone.** Já
+existiu um terceiro, em `tel:` e `.botao--contorno`, numa segunda linha; o dono
+do projeto mandou tirar. O número segue só dentro da URL do `wa.me`. Se pedirem
+o telefone de volta, é uma terceira linha em contorno, não um terceiro botão na
+mesma linha.
 
 ### Link do WhatsApp
 
@@ -348,12 +351,15 @@ https://wa.me/5542999734488?text=Ol%C3%A1%21%20Gostaria%20de%20agendar%20uma%20c
 Linguagem séria, respeitosa e gentil. O paciente que chega aqui pode estar assustado
 (a lista inclui câncer e tumores) — acolha antes de vender.
 
-O briefing entrega a lista de condições como um despejo clínico. Ela **deve** ser
-reorganizada em grupos legíveis para leigo — Ouvido e Audição · Nariz e Seios da Face ·
-Garganta, Voz e Vias Aéreas · Cabeça e Pescoço (nódulos, tireoide, glândulas salivares,
-oncologia) — explicando primeiro *para que serve* cada especialidade. Um diferencial que
-vale destacar: ORL e CCP juntas cobrem praticamente tudo entre o crânio e o tórax, e no
-Brasil é raro o mesmo médico ter as duas.
+O briefing entrega a lista de condições como um despejo clínico. Ela é reorganizada
+em quatro grupos, descendo o corpo — **Ouvido e audição · Cavidade nasal ·
+Orofaringe e laringe · Pescoço, tireoide e glândulas salivares** — com a oncologia
+fora da régua, em bloco próprio. **Os títulos e os itens dessas listas vieram do
+próprio médico** e são curtos de propósito: "Rinites", não "rinites alérgicas e não
+alérgicas". Já foram mais explicados e ele encurtou — não volte a inflar com
+qualificadores clínicos. Um diferencial que vale destacar: ORL e CCP juntas cobrem
+praticamente tudo entre o crânio e o tórax, e no Brasil é raro o mesmo médico ter
+as duas.
 
 Nunca prometa resultado de tratamento nem cura.
 
